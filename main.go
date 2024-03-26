@@ -21,8 +21,11 @@ func init() {
 func main() {
 
 	r := gin.Default()
-	r.POST("/user", controllers.PostsCreate)
-
+	r.POST("/user", controllers.UsersCreate)
+	r.GET("/users", controllers.GetUsers)
+	r.GET("/user/:id", controllers.GetUser)
+	r.PATCH("/user/:id", controllers.UpdateUser)
+	r.DELETE("/user/:id", controllers.DeleteUser)
 	// Start the server
 	if err := r.Run(); err != nil {
 		fmt.Println("Error starting server:", err)
