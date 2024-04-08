@@ -8,26 +8,40 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UsersCreate(c *gin.Context) {
-
-	user := models.User{
-		Username: "test",
-		Email:    "test@gmail.com",
-		Password: "password",
-		FullName: "test",
-		Role:     "r",
+func CreateUser(c *gin.Context) {
+	// Define a struct to hold incoming user data
+	var newUser struct {
+		Username string      `json:"username" binding:"required"`
+		Email    string      `json:"email" binding:"required,email"`
+		Password string      `json:"password" binding:"required"`
+		FullName string      `json:"full_name" binding:"required"`
+		Role     models.Role `json:"role" binding:"required"`
 	}
 
-	result := initializers.DB.Create(&user)
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error,
-		})
+	// Bind the incoming JSON data to the newUser struct
+	if err := c.BindJSON(&newUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"user": user,
-	})
+
+	// Create a new User instance with the data from the request
+	user := models.User{
+		Username: newUser.Username,
+		Email:    newUser.Email,
+		Password: newUser.Password,
+		FullName: newUser.FullName,
+		Role:     newUser.Role,
+	}
+
+	// Save the new user to the database
+	result := initializers.DB.Create(&user)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
+	// Return the created user in the response
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func GetUsers(c *gin.Context) {
@@ -60,6 +74,14 @@ func GetUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
+	type UserUpdate struct {
+		Username string      `json:"username"`
+		Email    string      `json:"email"`
+		Password string      `json:"password"`
+		FullName string      `json:"full_name"`
+		Role     models.Role `json:"role"`
+	}
+
 	var user models.User
 
 	result := initializers.DB.First(&user, c.Param("id"))
@@ -70,7 +92,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var updateUser models.UserUpdate
+	var updateUser UserUpdate
 	if err := c.BindJSON(&updateUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
