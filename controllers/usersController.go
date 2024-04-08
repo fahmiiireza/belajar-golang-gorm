@@ -9,7 +9,6 @@ import (
 )
 
 func CreateUser(c *gin.Context) {
-	// Define a struct to hold incoming user data
 	var newUser struct {
 		Username string      `json:"username" binding:"required"`
 		Email    string      `json:"email" binding:"required,email"`
@@ -18,13 +17,11 @@ func CreateUser(c *gin.Context) {
 		Role     models.Role `json:"role" binding:"required"`
 	}
 
-	// Bind the incoming JSON data to the newUser struct
 	if err := c.BindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Create a new User instance with the data from the request
 	user := models.User{
 		Username: newUser.Username,
 		Email:    newUser.Email,
@@ -33,14 +30,12 @@ func CreateUser(c *gin.Context) {
 		Role:     newUser.Role,
 	}
 
-	// Save the new user to the database
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
 
-	// Return the created user in the response
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
