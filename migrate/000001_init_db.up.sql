@@ -1,4 +1,6 @@
--- migrate -path migrate -database "postgresql://fahmifahreza@localhost:5432/fahmifahreza?sslmode=disable" -verbose up 
+-- migrate -path migrate -database "" -verbose up 
+
+-- postgresql://user:password@db:5432/library?sslmode=disable
 CREATE TYPE "role" AS ENUM (
   'AUTHOR',
   'ADMIN',
@@ -9,7 +11,8 @@ CREATE TYPE "role" AS ENUM (
 CREATE TYPE "employment_status" AS ENUM (
   'FULLTIME',
   'PARTTIME',
-  'INTERN'
+  'INTERN',
+  'RESIGNED'
 );
 
 CREATE TYPE "sex" AS ENUM (
@@ -38,13 +41,15 @@ CREATE TABLE "users" (
 CREATE TABLE "authors" (
   "id" bigserial PRIMARY KEY,
   "biography" varchar,
-  "nationality" varchar NOT NULL
+  "nationality" varchar NOT NULL,
+  "user_id" integer NOT NULL
 );
 
 CREATE TABLE "admins" (
   "id" bigserial PRIMARY KEY,
   "salary" integer NOT NULL,
-  "employment_status" employment_status NOT NULL
+  "employment_status" employment_status NOT NULL,
+  "user_id" integer NOT NULL
 );
 
 CREATE TABLE "categories" (
@@ -58,12 +63,13 @@ CREATE TABLE "categories" (
 
 CREATE TABLE "books" (
   "id" bigserial PRIMARY KEY,
-  "isbn" integer UNIQUE NOT NULL,
+  "isbn" varchar UNIQUE NOT NULL,
   "title" varchar NOT NULL,
   "language" varchar NOT NULL,
   "total_copy" integer NOT NULL,
   "shelf_id" integer,
   "category_id" integer,
+  "description" varchar,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
   "deleted_at" timestamptz,
@@ -85,7 +91,8 @@ CREATE TABLE "librarians" (
   "salary" integer NOT NULL,
   "employment_status" employment_status NOT NULL,
   "joining_date" date NOT NULL,
-  "created_by" integer NOT NULL
+  "created_by" integer NOT NULL,
+  "user_id" integer NOT NULL
 );
 
 CREATE TABLE "borrows" (
@@ -115,7 +122,8 @@ CREATE TABLE "students" (
   "id" bigserial PRIMARY KEY,
   "sex" sex NOT NULL,
   "birth_date" date NOT NULL,
-  "class_id" integer NOT NULL
+  "class_id" integer NOT NULL,
+  "user_id" integer NOT NULL
 );
 
 CREATE TABLE "classes" (
@@ -151,13 +159,13 @@ CREATE INDEX "student_class_index" ON "students" ("class_id");
 
 CREATE INDEX "class_name_index" ON "classes" ("name");
 
-ALTER TABLE "authors" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "authors" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "admins" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "admins" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "librarians" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "librarians" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "students" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "students" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "students" ADD FOREIGN KEY ("class_id") REFERENCES "classes" ("id") ON DELETE CASCADE;
 

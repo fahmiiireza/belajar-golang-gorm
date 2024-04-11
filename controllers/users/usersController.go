@@ -3,11 +3,13 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/Man4ct/belajar-golang-gorm/helpers"
 	"github.com/Man4ct/belajar-golang-gorm/initializers"
 	"github.com/Man4ct/belajar-golang-gorm/models"
 	"github.com/gin-gonic/gin"
 )
 
+// CreateUser creates a new user
 func CreateUser(c *gin.Context) {
 	var newUser struct {
 		Username string      `json:"username" binding:"required"`
@@ -22,10 +24,16 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := helpers.HashPassword(newUser.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		return
+	}
+
 	user := models.User{
 		Username: newUser.Username,
 		Email:    newUser.Email,
-		Password: newUser.Password,
+		Password: hashedPassword,
 		FullName: newUser.FullName,
 		Role:     newUser.Role,
 	}
@@ -72,7 +80,6 @@ func UpdateUser(c *gin.Context) {
 	type UserUpdate struct {
 		Username string      `json:"username"`
 		Email    string      `json:"email"`
-		Password string      `json:"password"`
 		FullName string      `json:"full_name"`
 		Role     models.Role `json:"role"`
 	}

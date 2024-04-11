@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db: 
+    image: postgres:16-alpine
+    ports:
+      - 5433:5432
+    restart: always
+    environment:
+      POSTGRES_DB: library
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+  api:
+    build: .
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - PORT=8080
+      - DATABASE_URL=db

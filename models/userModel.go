@@ -45,40 +45,6 @@ type User struct {
 	gorm.Model
 }
 
-// type Author struct {
-// 	ID          uint `gorm:"primaryKey"`
-// 	Biography   string
-// 	Nationality string `gorm:"not null"`
-// 	UserID      uint
-// 	// `gorm:"foreignKey:ID"`
-// }
-
-// type Admin struct {
-// 	ID               uint             `gorm:"primaryKey"`
-// 	Salary           int              `gorm:"not null"`
-// 	EmploymentStatus EmploymentStatus `gorm:"type:employment_status;not null"`
-// 	UserID           uint
-// }
-
-// type Librarian struct {
-// 	ID               uint             `gorm:"primaryKey"`
-// 	Salary           int              `gorm:"not null"`
-// 	EmploymentStatus EmploymentStatus `gorm:"type:employment_status;not null"`
-// 	JoiningDate      time.Time        `gorm:"not null"`
-// 	CreatedBy        uint             `gorm:"index;not null"`
-// 	CreatedByUser    User             `gorm:"foreignKey:CreatedBy"`
-// 	UserID           uint
-// }
-
-// type Student struct {
-// 	ID        uint      `gorm:"primaryKey"`
-// 	Sex       Sex       `gorm:"type:sex;not null"`
-// 	BirthDate time.Time `gorm:"not null"`
-// 	ClassID   uint      `gorm:"not null"`
-// 	// Class     Class     `gorm:"foreignKey:ClassID"`
-// 	UserID uint
-// }
-
 // type Category struct {
 // 	gorm.Model
 
