@@ -27,39 +27,33 @@ func CreateLibrarian(c *gin.Context) {
 		return
 	}
 
-	tx := initializers.DB.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	// Use automatic transaction with callback function
+	if err := initializers.DB.Transaction(func(tx *gorm.DB) error {
+		// Create user
+		user, err := helpers.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName)
+		if err != nil {
+			return err
 		}
-	}()
 
-	user, err := helpers.CreateUserWithTx(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName)
-	if err != nil {
-		tx.Rollback()
+		// Create librarian
+		librarian := models.Librarian{
+			Salary:           newLibrarian.Salary,
+			EmploymentStatus: newLibrarian.EmploymentStatus,
+			JoiningDate:      newLibrarian.JoiningDate,
+			CreatedBy:        1,
+			UserID:           user.ID,
+		}
+		if err := tx.Create(&librarian).Error; err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create librarian"})
 		return
 	}
 
-	librarian := models.Librarian{
-		Salary:           newLibrarian.Salary,
-		EmploymentStatus: newLibrarian.EmploymentStatus,
-		JoiningDate:      newLibrarian.JoiningDate,
-		CreatedBy:        1,
-		UserID:           user.ID,
-	}
-
-	err = tx.Create(&librarian).Error
-	if err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create librarian"})
-		return
-	}
-
-	tx.Commit()
-
-	c.JSON(http.StatusOK, gin.H{"librarian": librarian})
+	c.JSON(http.StatusOK, gin.H{"message": "Librarian created successfully"})
 }
 
 func GetLibrarian(c *gin.Context) {

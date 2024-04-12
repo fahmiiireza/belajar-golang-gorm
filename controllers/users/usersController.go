@@ -9,6 +9,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func LoginHandler(c *gin.Context) {
+	type UserLogin struct {
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	var user UserLogin
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Query the database for the user with the provided username
+	var dbUser models.User
+	if err := initializers.DB.Where("username = ?", user.Username).First(&dbUser).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Compare the hashed password from the database with the plaintext password
+	if !helpers.CheckPasswordHash(dbUser.Password, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// Generate JWT token
+	tokenString, err := helpers.CreateToken(user.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+}
+
 // CreateUser creates a new user
 func CreateUser(c *gin.Context) {
 	var newUser struct {
