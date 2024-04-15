@@ -10,7 +10,7 @@ the TF and the DF of each search made on it
  DF: the number of documents in which the word was found.
 */
 
-package concur
+package api
 
 import (
 	"fmt"
@@ -18,29 +18,29 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Man4ct/belajar-golang-gorm/initializers"
-	"github.com/Man4ct/belajar-golang-gorm/models"
+	"github.com/Man4ct/belajar-golang-gorm/db"
+	model "github.com/Man4ct/belajar-golang-gorm/db/model"
 	"github.com/gin-gonic/gin"
 )
 
-type WordInfo struct {
+type WordFrequency struct {
 	TF          int // Text Frequency
 	DF          int // Document Frequency
-	LastTF      int // Last Text Frequency
-	LastDF      int // Last Document Frequency
-	SearchCount int // Number of times the word was searched
+	LastTF      int
+	LastDF      int
+	SearchCount int
 }
 
 var (
-	wordInfoMap map[string]*WordInfo
-	mutex       sync.Mutex
+	wordFrequencyMap map[string]*WordFrequency
+	mutex            sync.Mutex
 )
 
 func init() {
-	wordInfoMap = make(map[string]*WordInfo)
+	wordFrequencyMap = make(map[string]*WordFrequency)
 }
 
-func SearchHandler(c *gin.Context) {
+func searchHandler(c *gin.Context) {
 	query := c.Query("query")
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing query parameter"})
@@ -59,15 +59,15 @@ func SearchHandler(c *gin.Context) {
 	}
 	wg.Wait()
 
-	c.JSON(http.StatusOK, wordInfoMap)
+	c.JSON(http.StatusOK, wordFrequencyMap)
 }
 
 func processWord(word string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	var books []models.Book
-	err := initializers.DB.Model(&models.Book{}).Where("description ILIKE ?", "%"+word+"%").Find(&books).Error
+	var books []model.Book
+	err := db.GetDB().Model(&model.Book{}).Where("description ILIKE ?", "%"+word+"%").Find(&books).Error
 	if err != nil {
 		fmt.Printf("Error querying books: %v\n", err)
 		return
@@ -78,10 +78,10 @@ func processWord(word string) {
 		tf += strings.Count(strings.ToLower(book.Description), strings.ToLower(word))
 	}
 
-	info, exists := wordInfoMap[word]
+	info, exists := wordFrequencyMap[word]
 	if !exists {
-		info = &WordInfo{}
-		wordInfoMap[word] = info
+		info = &WordFrequency{}
+		wordFrequencyMap[word] = info
 	}
 	info.LastTF = info.TF
 	info.LastDF = info.DF

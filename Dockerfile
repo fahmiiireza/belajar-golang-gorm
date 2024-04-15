@@ -8,6 +8,8 @@ RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate
 COPY go.mod ./
 RUN go mod download && go mod verify
 
+COPY .env ./
+
 COPY . .
 RUN go build -v -o main .
 

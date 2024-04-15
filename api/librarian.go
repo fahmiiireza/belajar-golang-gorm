@@ -1,46 +1,52 @@
-package controllers
+package api
 
 import (
 	"net/http"
 	"time"
 
-	"github.com/Man4ct/belajar-golang-gorm/helpers"
-	"github.com/Man4ct/belajar-golang-gorm/initializers"
-	"github.com/Man4ct/belajar-golang-gorm/models"
+	"github.com/Man4ct/belajar-golang-gorm/db"
+	model "github.com/Man4ct/belajar-golang-gorm/db/model"
+	"github.com/Man4ct/belajar-golang-gorm/helper"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func CreateLibrarian(c *gin.Context) {
-	var newLibrarian struct {
-		Username         string                  `json:"username" binding:"required"`
-		Email            string                  `json:"email" binding:"required,email"`
-		Password         string                  `json:"password" binding:"required"`
-		FullName         string                  `json:"full_name" binding:"required"`
-		Salary           int                     `json:"salary" binding:"required"`
-		EmploymentStatus models.EmploymentStatus `json:"employment_status" binding:"required"`
-		JoiningDate      time.Time               `json:"joining_date" binding:"required"`
-	}
+func createLibrarian(c *gin.Context) {
+	var newLibrarian LibrarianRequest
 
 	if err := c.BindJSON(&newLibrarian); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Use automatic transaction with callback function
-	if err := initializers.DB.Transaction(func(tx *gorm.DB) error {
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Username not found in context"})
+		return
+	}
+
+	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
+		var userIDCreatedBy uint
+		if err := tx.Model(&model.User{}).Where("username = ?", username).Select("id").First(&userIDCreatedBy).Error; err != nil {
+			return err
+		}
+
+		var adminID uint
+		if err := tx.Model(&model.Admin{}).Where("user_id = ?", userIDCreatedBy).Select("id").First(&adminID).Error; err != nil {
+			return err
+		}
+
 		// Create user
-		user, err := helpers.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName)
+		user, err := helper.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName)
 		if err != nil {
 			return err
 		}
 
-		// Create librarian
-		librarian := models.Librarian{
+		librarian := model.Librarian{
 			Salary:           newLibrarian.Salary,
 			EmploymentStatus: newLibrarian.EmploymentStatus,
 			JoiningDate:      newLibrarian.JoiningDate,
-			CreatedBy:        1,
+			CreatedBy:        adminID,
 			UserID:           user.ID,
 		}
 		if err := tx.Create(&librarian).Error; err != nil {
@@ -56,9 +62,9 @@ func CreateLibrarian(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Librarian created successfully"})
 }
 
-func GetLibrarian(c *gin.Context) {
-	var librarian models.Librarian
-	result := initializers.DB.Preload("User").Where("employment_status != ?", "RESIGNED").First(&librarian, c.Param("id"))
+func getLibrarian(c *gin.Context) {
+	var librarian model.Librarian
+	result := db.GetDB().Preload("User").Where("employment_status != ?", "RESIGNED").First(&librarian, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": result.Error,
@@ -69,15 +75,15 @@ func GetLibrarian(c *gin.Context) {
 		"librarian": librarian,
 	})
 }
-func UpdateLibrarian(c *gin.Context) {
+func updateLibrarian(c *gin.Context) {
 	type UserUpdate struct {
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		FullName string `json:"full_name"`
 	}
 	type LibrarianUpdate struct {
-		Salary           int                     `json:"salary"`
-		EmploymentStatus models.EmploymentStatus `json:"employment_status"`
+		Salary           int                    `json:"salary"`
+		EmploymentStatus model.EmploymentStatus `json:"employment_status"`
 	}
 	type UpdateData struct {
 		User      UserUpdate      `json:"user"`
@@ -90,14 +96,14 @@ func UpdateLibrarian(c *gin.Context) {
 		return
 	}
 
-	var librarian models.Librarian
-	result := initializers.DB.Preload("User").First(&librarian, c.Param("id"))
+	var librarian model.Librarian
+	result := db.GetDB().Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
 		return
 	}
 
-	if err := initializers.DB.Transaction(func(tx *gorm.DB) error {
+	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&librarian.User).Updates(updateData.User).Error; err != nil {
 			return err
 		}
@@ -113,20 +119,20 @@ func UpdateLibrarian(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"librarian": librarian})
 }
 
-func DeleteLibrarian(c *gin.Context) {
-	var librarian models.Librarian
-	result := initializers.DB.Preload("User").First(&librarian, c.Param("id"))
+func deleteLibrarian(c *gin.Context) {
+	var librarian model.Librarian
+	result := db.GetDB().Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
 		return
 	}
 
-	librarian.EmploymentStatus = models.EmploymentStatusPartTime
+	librarian.EmploymentStatus = model.EmploymentStatusPartTime
 	librarian.JoiningDate = time.Now()
 	librarian.User.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
 
 	// Update the librarian and associated user
-	if err := initializers.DB.Transaction(func(tx *gorm.DB) error {
+	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&librarian).Updates(librarian).Error; err != nil {
 			return err
 		}

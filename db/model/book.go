@@ -1,4 +1,4 @@
-package models
+package db
 
 type Book struct {
 	ID          uint      `gorm:"primaryKey"`

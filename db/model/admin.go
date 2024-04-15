@@ -1,4 +1,4 @@
-package models
+package db
 
 type Admin struct {
 	ID               uint             `gorm:"primaryKey"`
