@@ -22,5 +22,7 @@ func SetupRouter() *gin.Engine {
 	r.DELETE("/librarian/:id", deleteLibrarian)
 	r.GET("/search", searchHandler)
 
+	r.GET("/book", getAllBook)
+	r.GET("/book/:id", getOneBook)
 	return r
 }
