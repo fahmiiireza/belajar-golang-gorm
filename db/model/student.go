@@ -7,7 +7,7 @@ type Student struct {
 	Sex       Sex       `gorm:"type:sex;not null"`
 	BirthDate time.Time `gorm:"not null"`
 	ClassID   uint      `gorm:"not null"`
-	// Class     Class     `gorm:"foreignKey:ClassID"`
-	UserID uint
-	User   User
+	UserID    uint
+	User      User
+	Borrows   []Borrow
 }

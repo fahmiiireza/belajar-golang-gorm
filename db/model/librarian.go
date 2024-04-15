@@ -10,7 +10,7 @@ type Librarian struct {
 	CreatedBy        uint             `gorm:"not null"`
 	UserID           uint             `gorm:"not null"`
 	User             User
-	Admin            Admin `gorm:"foreignKey:CreatedBy"`
+	Borrows          []Borrow
 }
 
 // INSERT INTO books (isbn, title, language, total_copy, description) VALUES
