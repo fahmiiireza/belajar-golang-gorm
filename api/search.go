@@ -40,7 +40,7 @@ func init() {
 	wordFrequencyMap = make(map[string]*WordFrequency)
 }
 
-func searchHandler(c *gin.Context) {
+func searchBookDescription(c *gin.Context) {
 	query := c.Query("query")
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing query parameter"})

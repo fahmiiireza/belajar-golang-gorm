@@ -19,15 +19,12 @@ func createAdmin(c *gin.Context) {
 		return
 	}
 
-	// Use automatic transaction with callback function
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
-		// Create user
-		user, err := helper.CreateUser(tx, newAdmin.Username, newAdmin.Email, newAdmin.Password, newAdmin.FullName)
+		user, err := helper.CreateUser(tx, newAdmin.Username, newAdmin.Email, newAdmin.Password, newAdmin.FullName, model.RoleAdmin)
 		if err != nil {
 			return err
 		}
 
-		// Create librarian
 		admin := model.Admin{
 			Salary:           newAdmin.Salary,
 			EmploymentStatus: newAdmin.EmploymentStatus,
@@ -39,9 +36,9 @@ func createAdmin(c *gin.Context) {
 
 		return nil
 	}); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create librarian"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Admin"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Librarian created successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Admin created successfully"})
 }

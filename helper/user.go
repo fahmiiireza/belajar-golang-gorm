@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(tx *gorm.DB, username, email, password, fullName string) (model.User, error) {
+func CreateUser(tx *gorm.DB, username, email, password, fullName string, role model.Role) (model.User, error) {
 	hashedPassword, err := HashPassword(password)
 	if err != nil {
 		return model.User{}, err
@@ -16,7 +16,7 @@ func CreateUser(tx *gorm.DB, username, email, password, fullName string) (model.
 		Email:    email,
 		Password: hashedPassword,
 		FullName: fullName,
-		Role:     model.RoleLibrarian,
+		Role:     role,
 	}
 
 	err = tx.Create(&user).Error

@@ -19,7 +19,7 @@ func createLibrarian(c *gin.Context) {
 		return
 	}
 
-	username, exists := c.Get("username")
+	usnLoggedIn, exists := c.Get("username")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Username not found in context"})
 		return
@@ -27,7 +27,7 @@ func createLibrarian(c *gin.Context) {
 
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		var userIDCreatedBy uint
-		if err := tx.Model(&model.User{}).Where("username = ?", username).Select("id").First(&userIDCreatedBy).Error; err != nil {
+		if err := tx.Model(&model.User{}).Where("username = ?", usnLoggedIn).Select("id").First(&userIDCreatedBy).Error; err != nil {
 			return err
 		}
 
@@ -36,8 +36,7 @@ func createLibrarian(c *gin.Context) {
 			return err
 		}
 
-		// Create user
-		user, err := helper.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName)
+		user, err := helper.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName, model.RoleLibrarian)
 		if err != nil {
 			return err
 		}
@@ -70,6 +69,23 @@ func getLibrarian(c *gin.Context) {
 		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").
 		First(&librarian, c.Param("id"))
 
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": result.Error,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"librarian": librarian,
+	})
+}
+
+func getAllLibrarian(c *gin.Context) {
+	var librarian model.Librarian
+	result := db.GetDB().
+		Preload("User").
+		Joins("JOIN users ON users.id = librarians.user_id").
+		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").Find(&librarian)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": result.Error,

@@ -14,15 +14,18 @@ func SetupRouter() *gin.Engine {
 	// Use the middleware for protected routes
 	r.Use(authMiddleware())
 
-	r.POST("/admin", createAdmin)
-
-	r.POST("/librarian", createLibrarian)
+	r.GET("/librarians", getAllLibrarian)
 	r.GET("/librarian/:id", getLibrarian)
-	r.PATCH("/librarian/:id", updateLibrarian)
-	r.DELETE("/librarian/:id", deleteLibrarian)
-	r.GET("/search", searchHandler)
 
-	r.GET("/book", getAllBook)
+	r.GET("/books", getAllBook)
 	r.GET("/book/:id", getOneBook)
+	r.GET("/book?q=description", searchBookDescription)
+	r.GET("/book/:id/authors", getBookAuthors)
+
+	r.POST("/admin", adminMiddleware(), createAdmin)
+	r.POST("/librarian", adminMiddleware(), createLibrarian)
+	r.PATCH("/librarian/:id", adminMiddleware(), updateLibrarian)
+	r.DELETE("/librarian/:id", adminMiddleware(), deleteLibrarian)
+
 	return r
 }
