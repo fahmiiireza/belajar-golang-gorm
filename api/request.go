@@ -26,3 +26,22 @@ type AdminRequest struct {
 	Salary           int                 `json:"salary" binding:"required"`
 	EmploymentStatus db.EmploymentStatus `json:"employment_status" binding:"required"`
 }
+
+type UserUpdate struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	FullName string `json:"full_name"`
+}
+type LibrarianUpdate struct {
+	Salary           int                 `json:"salary"`
+	EmploymentStatus db.EmploymentStatus `json:"employment_status"`
+}
+type LibrarianUpdateRequest struct {
+	User      UserUpdate      `json:"user"`
+	Librarian LibrarianUpdate `json:"librarian"`
+}
+
+type UserLogin struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}

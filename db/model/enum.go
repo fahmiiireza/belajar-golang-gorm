@@ -15,6 +15,7 @@ const (
 	EmploymentStatusFullTime EmploymentStatus = "FULLTIME"
 	EmploymentStatusPartTime EmploymentStatus = "PARTTIME"
 	EmploymentStatusIntern   EmploymentStatus = "INTERN"
+	EmploymentStatusResigned EmploymentStatus = "RESIGNED"
 )
 
 type Sex string

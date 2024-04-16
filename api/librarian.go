@@ -64,7 +64,12 @@ func createLibrarian(c *gin.Context) {
 
 func getLibrarian(c *gin.Context) {
 	var librarian model.Librarian
-	result := db.GetDB().Preload("User").Where("employment_status != ?", "RESIGNED").First(&librarian, c.Param("id"))
+	result := db.GetDB().
+		Preload("User").
+		Joins("JOIN users ON users.id = librarians.user_id").
+		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").
+		First(&librarian, c.Param("id"))
+
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": result.Error,
@@ -76,21 +81,7 @@ func getLibrarian(c *gin.Context) {
 	})
 }
 func updateLibrarian(c *gin.Context) {
-	type UserUpdate struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		FullName string `json:"full_name"`
-	}
-	type LibrarianUpdate struct {
-		Salary           int                    `json:"salary"`
-		EmploymentStatus model.EmploymentStatus `json:"employment_status"`
-	}
-	type UpdateData struct {
-		User      UserUpdate      `json:"user"`
-		Librarian LibrarianUpdate `json:"librarian"`
-	}
-
-	var updateData UpdateData
+	var updateData LibrarianUpdateRequest
 	if err := c.BindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -127,8 +118,8 @@ func deleteLibrarian(c *gin.Context) {
 		return
 	}
 
-	librarian.EmploymentStatus = model.EmploymentStatusPartTime
-	librarian.JoiningDate = time.Now()
+	librarian.EmploymentStatus = model.EmploymentStatusResigned
+	// librarian.JoiningDate = time.Now()
 	librarian.User.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
 
 	// Update the librarian and associated user
