@@ -12,22 +12,33 @@ import (
 )
 
 func createAdmin(c *gin.Context) {
-	var newAdmin AdminRequest
+	var adminRequest AdminRequest
+	var admin model.Admin
 
-	if err := c.BindJSON(&newAdmin); err != nil {
+	if err := c.BindJSON(&adminRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	if adminRequest.EmploymentStatus == "RESIGNED" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Employment status cannot be resigned"})
+		return
+	}
+
+	if !helper.IsValidEmail(adminRequest.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+		return
+	}
+
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
-		user, err := helper.CreateUser(tx, newAdmin.Username, newAdmin.Email, newAdmin.Password, newAdmin.FullName, model.RoleAdmin)
+		user, err := helper.CreateUser(tx, adminRequest.Username, adminRequest.Email, adminRequest.Password, adminRequest.FullName, model.RoleAdmin)
 		if err != nil {
 			return err
 		}
 
-		admin := model.Admin{
-			Salary:           newAdmin.Salary,
-			EmploymentStatus: newAdmin.EmploymentStatus,
+		admin = model.Admin{
+			Salary:           adminRequest.Salary,
+			EmploymentStatus: adminRequest.EmploymentStatus,
 			UserID:           user.ID,
 		}
 		if err := tx.Create(&admin).Error; err != nil {
@@ -40,5 +51,5 @@ func createAdmin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Admin created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"admin": admin})
 }

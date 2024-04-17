@@ -1,5 +1,3 @@
-// api/server.go
-
 package api
 
 import (
@@ -11,21 +9,20 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/login", login)
 
-	// Use the middleware for protected routes
 	r.Use(authMiddleware())
 
 	r.GET("/librarians", getAllLibrarian)
-	r.GET("/librarian/:id", getLibrarian)
-	r.POST("/librarian", adminMiddleware(), createLibrarian)
-	r.PATCH("/librarian/:id", adminMiddleware(), updateLibrarian)
-	r.DELETE("/librarian/:id", adminMiddleware(), deleteLibrarian)
+	r.GET("/librarians/:id", getLibrarian)
+	r.POST("/librarians", adminMiddleware(), createLibrarian)
+	r.PATCH("/librarians/:id", adminMiddleware(), updateLibrarian)
+	r.DELETE("/librarians/:id", adminMiddleware(), deleteLibrarian)
 
 	r.GET("/books", getAllBook)
-	r.GET("/book/:id", getOneBook)
-	r.GET("/book/description", searchBookDescription)
-	r.GET("/book/:id/authors", getBookAuthors)
+	r.GET("/books/:id", getOneBook)
+	r.GET("/books/description", searchBookDescription)
+	r.GET("/books/:id/authors", getBookAuthors)
 
-	r.POST("/admin", adminMiddleware(), createAdmin)
+	r.POST("/admins", adminMiddleware(), createAdmin)
 
 	return r
 }

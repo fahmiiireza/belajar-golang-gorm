@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"regexp"
+
 	model "github.com/Man4ct/belajar-golang-gorm/db/model"
 	"gorm.io/gorm"
 )
@@ -25,4 +27,9 @@ func CreateUser(tx *gorm.DB, username, email, password, fullName string, role mo
 	}
 
 	return user, nil
+}
+func IsValidEmail(email string) bool {
+	// Regular expression for email validation
+	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	return emailRegex.MatchString(email)
 }

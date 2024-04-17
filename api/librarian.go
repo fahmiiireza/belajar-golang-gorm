@@ -12,15 +12,20 @@ import (
 )
 
 func createLibrarian(c *gin.Context) {
-	var newLibrarian LibrarianRequest
-
-	if err := c.BindJSON(&newLibrarian); err != nil {
+	var librarianRequest LibrarianRequest
+	var librarian model.Librarian
+	if err := c.BindJSON(&librarianRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if newLibrarian.EmploymentStatus == "RESIGNED" {
+	if librarianRequest.EmploymentStatus == "RESIGNED" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Employment status cannot be resigned"})
+		return
+	}
+
+	if !helper.IsValidEmail(librarianRequest.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
 		return
 	}
 
@@ -32,7 +37,7 @@ func createLibrarian(c *gin.Context) {
 
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		var userIDCreatedBy uint
-		if err := tx.Model(&model.User{}).Where("username = ?", usnLoggedIn).Select("id").First(&userIDCreatedBy).Error; err != nil {
+		if err := tx.Model(&model.User{}).Where("username = ? AND users.deleted_at IS NULL", usnLoggedIn).Select("id").First(&userIDCreatedBy).Error; err != nil {
 			return err
 		}
 
@@ -41,15 +46,15 @@ func createLibrarian(c *gin.Context) {
 			return err
 		}
 
-		user, err := helper.CreateUser(tx, newLibrarian.Username, newLibrarian.Email, newLibrarian.Password, newLibrarian.FullName, model.RoleLibrarian)
+		user, err := helper.CreateUser(tx, librarianRequest.Username, librarianRequest.Email, librarianRequest.Password, librarianRequest.FullName, model.RoleLibrarian)
 		if err != nil {
 			return err
 		}
 
-		librarian := model.Librarian{
-			Salary:           newLibrarian.Salary,
-			EmploymentStatus: newLibrarian.EmploymentStatus,
-			JoiningDate:      newLibrarian.JoiningDate,
+		librarian = model.Librarian{
+			Salary:           librarianRequest.Salary,
+			EmploymentStatus: librarianRequest.EmploymentStatus,
+			JoiningDate:      librarianRequest.JoiningDate,
 			CreatedBy:        adminID,
 			UserID:           user.ID,
 		}
@@ -63,7 +68,7 @@ func createLibrarian(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Librarian created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"librarian": librarian})
 }
 
 func getLibrarian(c *gin.Context) {
@@ -107,11 +112,15 @@ func updateLibrarian(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if updateData.User.Email != "" && !helper.IsValidEmail(updateData.User.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+		return
+	}
 
 	var librarian model.Librarian
-	result := db.GetDB().Preload("User").First(&librarian, c.Param("id"))
+	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 		return
 	}
 
@@ -133,9 +142,9 @@ func updateLibrarian(c *gin.Context) {
 
 func deleteLibrarian(c *gin.Context) {
 	var librarian model.Librarian
-	result := db.GetDB().Preload("User").First(&librarian, c.Param("id"))
+	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 		return
 	}
 
@@ -155,5 +164,5 @@ func deleteLibrarian(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Librarian deleted successfully"})
+	c.JSON(http.StatusNoContent, gin.H{"message": "Librarian deleted successfully"})
 }

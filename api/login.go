@@ -17,8 +17,8 @@ func login(c *gin.Context) {
 	}
 
 	var dbUser model.User
-	if err := db.GetDB().Where("username = ?", user.Username).First(&dbUser).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+	if err := db.GetDB().Where("username = ? AND users.deleted_at IS NULL", user.Username).First(&dbUser).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
