@@ -19,6 +19,11 @@ func createLibrarian(c *gin.Context) {
 		return
 	}
 
+	if newLibrarian.EmploymentStatus == "RESIGNED" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Employment status cannot be resigned"})
+		return
+	}
+
 	usnLoggedIn, exists := c.Get("username")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Username not found in context"})
@@ -81,11 +86,11 @@ func getLibrarian(c *gin.Context) {
 }
 
 func getAllLibrarian(c *gin.Context) {
-	var librarian model.Librarian
+	var librarians []model.Librarian
 	result := db.GetDB().
 		Preload("User").
 		Joins("JOIN users ON users.id = librarians.user_id").
-		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").Find(&librarian)
+		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").Find(&librarians)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": result.Error,
@@ -93,7 +98,7 @@ func getAllLibrarian(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"librarian": librarian,
+		"librarians": librarians,
 	})
 }
 func updateLibrarian(c *gin.Context) {
@@ -135,10 +140,8 @@ func deleteLibrarian(c *gin.Context) {
 	}
 
 	librarian.EmploymentStatus = model.EmploymentStatusResigned
-	// librarian.JoiningDate = time.Now()
 	librarian.User.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
 
-	// Update the librarian and associated user
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&librarian).Updates(librarian).Error; err != nil {
 			return err

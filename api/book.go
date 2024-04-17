@@ -14,7 +14,7 @@ func getAllBook(c *gin.Context) {
 
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error.Error(),
+			"message": result.Error,
 		})
 		return
 	}
@@ -24,14 +24,15 @@ func getAllBook(c *gin.Context) {
 
 func getOneBook(c *gin.Context) {
 	var book model.Book
-	result := db.GetDB().Preload("Authors").First(&book, c.Param("id"))
-
+	result := db.GetDB().First(&book, c.Param("id"))
+	// .Preload("Authors")
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error.Error(),
+			"message": result.Error,
 		})
 		return
 	}
+	db.GetDB().Model(&book).Association("Authors").Find(&book.Authors)
 
 	c.JSON(http.StatusOK, gin.H{"book": book})
 }
@@ -54,15 +55,3 @@ func getBookAuthors(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"authors": authors})
 }
-
-// var librarian model.Librarian
-// result := db.GetDB().Preload("User").Where("employment_status != ?", "RESIGNED").First(&librarian, c.Param("id"))
-// if result.Error != nil {
-// 	c.JSON(http.StatusBadRequest, gin.H{
-// 		"message": result.Error,
-// 	})
-// 	return
-// }
-// c.JSON(http.StatusOK, gin.H{
-// 	"librarian": librarian,
-// })

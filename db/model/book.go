@@ -7,9 +7,9 @@ type Book struct {
 	Language    string `gorm:"not null"`
 	TotalCopy   int    `gorm:"not null"`
 	Description string
-	CreatedBy   uint      `gorm:"not null"`
-	Librarian   Librarian `gorm:"foreignKey:CreatedBy"`
-	Authors     []Author  `gorm:"many2many:author_books;"`
+	CreatedBy   uint       `gorm:"not null"`
+	Librarian   *Librarian `gorm:"foreignKey:CreatedBy" json:"librarian,omitempty"`
+	Authors     []Author   `gorm:"many2many:author_books;"`
 	BorrowItems []BorrowItem
 	ShelfID     uint
 	CategoryID  uint

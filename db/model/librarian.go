@@ -13,6 +13,17 @@ type Librarian struct {
 	Borrows          []Borrow
 }
 
+// type Librarian struct {
+// 	ID               uint              `gorm:"primaryKey"`
+// 	Salary           *int              // Changed to pointer
+// 	EmploymentStatus *EmploymentStatus // Changed to pointer
+// 	JoiningDate      *time.Time        // Changed to pointer
+// 	CreatedBy        uint
+// 	UserID           uint
+// 	User             *User
+// 	Borrows          []*Borrow // Changed to slice of pointers
+// }
+
 // INSERT INTO books (isbn, title, language, total_copy, description) VALUES
 // (9780061120084, , 'English', 10, 'To Kill a Mockingbird is a novel by Harper Lee published in 1960. It was immediately successful, winning the Pulitzer Prize, and has become a classic of modern American literature.'),
 // (9780743273565, 'The Great Gatsby', 'English', 8, 'The Great Gatsby is a novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on Long Island, the novel depicts narrator Nick Carraway''s interactions with mysterious millionaire Jay Gatsby and Gatsby''s obsession to reunite with his former lover, Daisy Buchanan.'),
