@@ -22,7 +22,7 @@ func SetupRouter() *gin.Engine {
 
 	r.GET("/books", getAllBook)
 	r.GET("/book/:id", getOneBook)
-	r.GET("/book?q=description", searchBookDescription)
+	r.GET("/book/description", searchBookDescription)
 	r.GET("/book/:id/authors", getBookAuthors)
 
 	r.POST("/admin", adminMiddleware(), createAdmin)
