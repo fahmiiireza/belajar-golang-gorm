@@ -7,9 +7,9 @@ services:
       - 5433:5432
     restart: always
     environment:
-      POSTGRES_DB: library
       POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
+      SECRET_KEY: fahmi
+
   api:
     build: .
     ports:
@@ -19,4 +19,4 @@ services:
       - db
     environment:
       - PORT=8080
-      - DATABASE_URL=db
+      - DB_URL=postgresql://user:password@db:5432/library

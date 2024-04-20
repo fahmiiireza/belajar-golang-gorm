@@ -52,3 +52,21 @@ func adminMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func librarianMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		role, exists := c.Get("role")
+
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Role not found in context"})
+			return
+		}
+		if role != "ADMIN" && role != "LIBRARIAN" {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+			return
+		}
+
+		c.Next()
+	}
+}

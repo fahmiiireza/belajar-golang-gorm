@@ -1,7 +1,9 @@
 package db
 
+import "gorm.io/gorm"
+
 type Book struct {
-	ID          uint   `gorm:"primaryKey"`
+	gorm.Model
 	ISBN        string `gorm:"unique;not null"`
 	Title       string `gorm:"not null"`
 	Language    string `gorm:"not null"`

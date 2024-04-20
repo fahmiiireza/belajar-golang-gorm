@@ -45,3 +45,13 @@ type UserLogin struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+
+type BookRequest struct {
+	Title       string `json:"title" binding:"required"`
+	ISBN        string `json:"isbn" binding:"required"`
+	Language    string `json:"language" binding:"required"`
+	TotalCopy   int    `json:"total_copy" binding:"required"`
+	ShelfID     int    `json:"shelf_id" binding:"required"`
+	CategoryID  int    `json:"category_id" binding:"required"`
+	Description string `json:"description"`
+}

@@ -31,7 +31,7 @@ func createLibrarian(c *gin.Context) {
 
 	usnLoggedIn, exists := c.Get("username")
 	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Username not found in context"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User logged in info not found in context"})
 		return
 	}
 
