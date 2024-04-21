@@ -10,10 +10,6 @@ import (
 
 var dbInstance *gorm.DB
 
-// func init() {
-// 	connectDB()
-// }
-
 func ConnectDB() {
 	// Connect to the database
 	var err error
