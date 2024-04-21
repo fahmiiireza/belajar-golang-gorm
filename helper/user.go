@@ -1,8 +1,10 @@
 package helper
 
 import (
+	"errors"
 	"regexp"
 
+	"github.com/Man4ct/belajar-golang-gorm/db"
 	model "github.com/Man4ct/belajar-golang-gorm/db/model"
 	"gorm.io/gorm"
 )
@@ -32,4 +34,14 @@ func IsValidEmail(email string) bool {
 	// Regular expression for email validation
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
+}
+
+func CheckExistingUser(username, email string) (bool, error) {
+	var existingUser model.User
+	if err := db.GetDB().Where("username = ? OR email = ?", username, email).First(&existingUser).Error; err == nil {
+		return true, nil
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, err
+	}
+	return false, nil
 }

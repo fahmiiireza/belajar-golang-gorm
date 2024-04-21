@@ -30,6 +30,14 @@ func createAdmin(c *gin.Context) {
 		return
 	}
 
+	if exists, err := helper.CheckExistingUser(adminRequest.Username, adminRequest.Email); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing user"})
+		return
+	} else if exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User with that username or email already exists"})
+		return
+	}
+
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
 		user, err := helper.CreateUser(tx, adminRequest.Username, adminRequest.Email, adminRequest.Password, adminRequest.FullName, model.RoleAdmin)
 		if err != nil {
