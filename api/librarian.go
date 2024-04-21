@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -26,6 +27,15 @@ func createLibrarian(c *gin.Context) {
 
 	if !helper.IsValidEmail(librarianRequest.Email) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+		return
+	}
+
+	var existingUser model.User
+	if err := db.GetDB().Where("username = ? OR email = ?", librarianRequest.Username, librarianRequest.Email).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User with that username or email already exists"})
+		return
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing user"})
 		return
 	}
 
