@@ -63,8 +63,8 @@ func searchBookDescription(c *gin.Context) {
 }
 
 func processWord(word string) {
-	mutex.Lock()
-	defer mutex.Unlock()
+	// mutex.Lock()
+	// defer mutex.Unlock()
 
 	var books []model.Book
 	err := db.GetDB().Model(&model.Book{}).Where("description ILIKE ?", "%"+word+"%").Find(&books).Error
@@ -78,6 +78,8 @@ func processWord(word string) {
 		tf += strings.Count(strings.ToLower(book.Description), strings.ToLower(word))
 	}
 
+	mutex.Lock()
+	defer mutex.Unlock()
 	info, exists := wordFrequencyMap[word]
 	if !exists {
 		info = &WordFrequency{}
