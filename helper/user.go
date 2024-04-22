@@ -36,11 +36,15 @@ func IsValidEmail(email string) bool {
 	return emailRegex.MatchString(email)
 }
 
+func IsUserNotFound(err error) bool {
+	return errors.Is(err, gorm.ErrRecordNotFound)
+}
+
 func CheckExistingUser(username, email string) (bool, error) {
 	var existingUser model.User
 	if err := db.GetDB().Where("username = ? OR email = ?", username, email).First(&existingUser).Error; err == nil {
 		return true, nil
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+	} else if !IsUserNotFound(err) {
 		return false, err
 	}
 	return false, nil

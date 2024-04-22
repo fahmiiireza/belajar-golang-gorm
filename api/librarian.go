@@ -88,11 +88,15 @@ func getLibrarian(c *gin.Context) {
 		First(&librarian, c.Param("id"))
 
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error,
-		})
-		return
+		if helper.IsUserNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"librarian": librarian,
 	})
@@ -105,10 +109,13 @@ func getAllLibrarian(c *gin.Context) {
 		Joins("JOIN users ON users.id = librarians.user_id").
 		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").Find(&librarians)
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error,
-		})
-		return
+		if helper.IsUserNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"librarians": librarians,
@@ -128,8 +135,13 @@ func updateLibrarian(c *gin.Context) {
 	var librarian model.Librarian
 	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
-		return
+		if helper.IsUserNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
 	}
 
 	if err := db.GetDB().Transaction(func(tx *gorm.DB) error {
@@ -152,8 +164,13 @@ func deleteLibrarian(c *gin.Context) {
 	var librarian model.Librarian
 	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
-		return
+		if helper.IsUserNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
 	}
 
 	librarian.EmploymentStatus = model.EmploymentStatusResigned
