@@ -88,7 +88,7 @@ func getLibrarian(c *gin.Context) {
 		First(&librarian, c.Param("id"))
 
 	if result.Error != nil {
-		if helper.IsUserNotFound(result.Error) {
+		if helper.IsNotFound(result.Error) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 			return
 		} else {
@@ -109,7 +109,7 @@ func getAllLibrarian(c *gin.Context) {
 		Joins("JOIN users ON users.id = librarians.user_id").
 		Where("employment_status != ? AND users.deleted_at IS NULL", "RESIGNED").Find(&librarians)
 	if result.Error != nil {
-		if helper.IsUserNotFound(result.Error) {
+		if helper.IsNotFound(result.Error) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 			return
 		} else {
@@ -127,6 +127,12 @@ func updateLibrarian(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	if updateData.User.Username == "" && updateData.User.Email == "" && updateData.Librarian.Salary == 0 && updateData.Librarian.EmploymentStatus == "" && updateData.User.FullName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Provide body data to update"})
+		return
+	}
+
 	if updateData.User.Email != "" && !helper.IsValidEmail(updateData.User.Email) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
 		return
@@ -135,7 +141,7 @@ func updateLibrarian(c *gin.Context) {
 	var librarian model.Librarian
 	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		if helper.IsUserNotFound(result.Error) {
+		if helper.IsNotFound(result.Error) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 			return
 		} else {
@@ -164,7 +170,7 @@ func deleteLibrarian(c *gin.Context) {
 	var librarian model.Librarian
 	result := db.GetDB().Where("employment_status != ?", "RESIGNED").Preload("User").First(&librarian, c.Param("id"))
 	if result.Error != nil {
-		if helper.IsUserNotFound(result.Error) {
+		if helper.IsNotFound(result.Error) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Librarian not found"})
 			return
 		} else {
@@ -189,5 +195,5 @@ func deleteLibrarian(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, gin.H{"message": "Librarian deleted successfully"})
+	c.JSON(http.StatusNoContent, nil)
 }

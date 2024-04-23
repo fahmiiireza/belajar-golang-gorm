@@ -5,6 +5,7 @@ import (
 
 	"github.com/Man4ct/belajar-golang-gorm/db"
 	model "github.com/Man4ct/belajar-golang-gorm/db/model"
+	"github.com/Man4ct/belajar-golang-gorm/helper"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +20,16 @@ func getAllBook(c *gin.Context) {
 		return
 	}
 
+	if result.Error != nil {
+		if helper.IsNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Books not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"books": books})
 }
 
@@ -27,11 +38,15 @@ func getOneBook(c *gin.Context) {
 	result := db.GetDB().First(&book, c.Param("id"))
 	// .Preload("Authors")
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": result.Error,
-		})
-		return
+		if helper.IsNotFound(result.Error) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
+			return
+		}
 	}
+
 	db.GetDB().Model(&book).Association("Authors").Find(&book.Authors)
 
 	c.JSON(http.StatusOK, gin.H{"book": book})
@@ -41,10 +56,13 @@ func getBookAuthors(c *gin.Context) {
 	var book model.Book
 
 	if err := db.GetDB().Preload("Authors").First(&book, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Failed to find the book",
-		})
-		return
+		if helper.IsNotFound(err) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Books not found"})
+			return
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	var authors []model.Author
@@ -74,9 +92,13 @@ func createBook(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find user logged in"})
 		return
 	}
+	if err := db.GetDB().Model(&model.Book{}).Where("isbn = ?", bookRequest.ISBN).First(&model.Book{}).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ISBN already exists"})
+		return
+	}
 
 	var librarianID uint
-	if err := db.GetDB().Model(&model.Admin{}).Where("user_id = ?", userIDCreatedBy).Select("id").First(&librarianID).Error; err != nil {
+	if err := db.GetDB().Model(&model.Librarian{}).Where("user_id = ?", userIDCreatedBy).Select("id").First(&librarianID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find librarian ID"})
 		return
 	}
@@ -87,11 +109,20 @@ func createBook(c *gin.Context) {
 		Description: bookRequest.Description,
 		Language:    bookRequest.Language,
 		TotalCopy:   bookRequest.TotalCopy,
-		ShelfID:     uint(bookRequest.ShelfID),
-		CategoryID:  uint(bookRequest.CategoryID),
+		ShelfID:     bookRequest.ShelfID,
+		CategoryID:  bookRequest.CategoryID,
 		CreatedBy:   librarianID,
 	}
 
+	// Check if ShelfID is provided
+	if bookRequest.ShelfID != 0 {
+		book.ShelfID = uint(bookRequest.ShelfID)
+	}
+
+	// Check if CategoryID is provided
+	if bookRequest.CategoryID != 0 {
+		book.CategoryID = uint(bookRequest.CategoryID)
+	}
 	if err := db.GetDB().Create(&book).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create book"})
 		return
@@ -113,5 +144,5 @@ func deleteBook(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, gin.H{"message": "Book deleted"})
+	c.JSON(http.StatusNoContent, nil)
 }

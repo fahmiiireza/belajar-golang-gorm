@@ -23,6 +23,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/books/:id/authors", getBookAuthors)
 	r.POST("/books", librarianMiddleware(), createBook)
 	r.DELETE("/books/:id", librarianMiddleware(), deleteBook)
+
 	r.POST("/admins", adminMiddleware(), createAdmin)
 
 	return r

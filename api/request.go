@@ -51,7 +51,7 @@ type BookRequest struct {
 	ISBN        string `json:"isbn" binding:"required"`
 	Language    string `json:"language" binding:"required"`
 	TotalCopy   int    `json:"total_copy" binding:"required"`
-	ShelfID     int    `json:"shelf_id" binding:"required"`
-	CategoryID  int    `json:"category_id" binding:"required"`
+	ShelfID     uint   `json:"shelf_id" binding:"required"`
+	CategoryID  uint   `json:"category_id" binding:"required"`
 	Description string `json:"description"`
 }
