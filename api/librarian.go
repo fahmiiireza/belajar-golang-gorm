@@ -72,7 +72,7 @@ func createLibrarian(c *gin.Context) {
 
 		return nil
 	}); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create librarian"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -189,6 +189,7 @@ func deleteLibrarian(c *gin.Context) {
 		if err := tx.Model(&librarian.User).Updates(librarian.User).Error; err != nil {
 			return err
 		}
+
 		return nil
 	}); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete librarian"})
