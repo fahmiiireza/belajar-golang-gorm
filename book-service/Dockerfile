@@ -9,11 +9,6 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
-RUN npm install express
-# Install TypeScript globally
-RUN npm install -g typescript
-RUN npm install --save-dev @types/express
-RUN npm install -g ts-node
 
 
 # Copy the rest of the application code to the working directory
