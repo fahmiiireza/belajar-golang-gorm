@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  user_db: 
+  user-db: 
     image: postgres:16-alpine
     ports:
       - 5433:5432
@@ -10,14 +10,22 @@ services:
       POSTGRES_PASSWORD: password
       SECRET_KEY: fahmi
 
-  user_api:
+  user-service:
     build: ./user-service
     ports:
       - 8080:8080
     restart: always
     depends_on:
-      - user_db
+      - user-db
+      - book-service
     environment:
       - PORT=8080
-      - DB_URL=postgresql://postgres:postgres@user_db:5432/user_db
-
+      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db
+      
+  book-service:
+    build: ./book-service
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+    
