@@ -43,6 +43,13 @@ Book.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       field: 'total_copy',
+      validate: {
+        notZero(value : number) {
+            if (value === 0) {
+                throw new Error('totalCopy cannot be 0');
+            }
+        },
+    },
     },
     shelfId: {
       type: DataTypes.INTEGER,

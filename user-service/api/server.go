@@ -17,12 +17,7 @@ func SetupRouter() *gin.Engine {
 	r.PATCH("/librarians/:id", adminMiddleware(), updateLibrarian)
 	r.DELETE("/librarians/:id", adminMiddleware(), deleteLibrarian)
 
-	r.GET("/books", getAllBook)
-	r.GET("/books/:id", getOneBook)
 	r.GET("/books/description", searchBookDescription)
-	r.GET("/books/:id/authors", getBookAuthors)
-	r.POST("/books", librarianMiddleware(), createBook)
-	r.DELETE("/books/:id", librarianMiddleware(), deleteBook)
 
 	r.POST("/admins", adminMiddleware(), createAdmin)
 
