@@ -8,6 +8,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.POST("/login", login)
+	r.POST("/admins", createAdmin)
 
 	r.Use(authMiddleware())
 
@@ -18,8 +19,6 @@ func SetupRouter() *gin.Engine {
 	r.DELETE("/librarians/:id", adminMiddleware(), deleteLibrarian)
 
 	r.GET("/books/description", searchBookDescription)
-
-	r.POST("/admins", adminMiddleware(), createAdmin)
 
 	return r
 }

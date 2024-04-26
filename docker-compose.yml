@@ -8,7 +8,6 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: password
-      SECRET_KEY: fahmi
 
   user-service:
     build: ./user-service
@@ -21,7 +20,8 @@ services:
     environment:
       - PORT=8080
       - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db
-      
+      - SECRET_KEY=fahmi
+
   book-service:
     build: ./book-service
     ports:
@@ -32,6 +32,7 @@ services:
     environment:
       - PORT=3000
       - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db  
+      - SECRET_KEY=fahmi
 
   book-db: 
     image: postgres:16-alpine
@@ -40,4 +41,3 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: password
-      SECRET_KEY: fahmi

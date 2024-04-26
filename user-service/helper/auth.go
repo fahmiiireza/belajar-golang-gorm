@@ -29,6 +29,7 @@ func CreateToken(username string, role string) (string, error) {
 			"role":     role,
 			"exp":      time.Now().Add(time.Hour * 4).Unix(),
 		})
+
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
