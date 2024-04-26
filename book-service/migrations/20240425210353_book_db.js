@@ -37,18 +37,6 @@ exports.up = function (knex) {
         "updated_at" timestamptz NOT NULL DEFAULT (now()),
         "deleted_at" timestamptz
       );
-      
-      CREATE TABLE "borrow_items" (
-        "id" bigserial PRIMARY KEY,
-        "book_id" integer NOT NULL,
-        "borrow_id" integer NOT NULL,
-        "return_date" date,
-        "fine_amount" integer NOT NULL,
-        "created_at" timestamptz NOT NULL DEFAULT (now()),
-        "updated_at" timestamptz NOT NULL DEFAULT (now()),
-        "deleted_at" timestamptz
-      );
-      
       CREATE TABLE "authors" (
         "id" bigserial PRIMARY KEY,
         "biography" varchar,
@@ -63,6 +51,21 @@ exports.up = function (knex) {
       
       CREATE INDEX "book_shelf_index" ON "books" ("shelf_id");
       CREATE INDEX "book_category_index" ON "books" ("category_id");
+
+
+
+
+
+
+
+ALTER TABLE "author_books" ADD FOREIGN KEY ("author_id") REFERENCES "authors" ("id");
+
+ALTER TABLE "author_books" ADD FOREIGN KEY ("book_id") REFERENCES "books" ("id");
+
+ALTER TABLE "books" ADD FOREIGN KEY ("shelf_id") REFERENCES "shelves" ("id");
+
+
+ALTER TABLE "books" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("id");
       
   `
   );
