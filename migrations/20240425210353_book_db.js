@@ -176,10 +176,48 @@ module.exports = {
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
+    await queryInterface.createTable('author_books', {
+      id: {
+        type: Sequelize.DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      author_id: {
+        type: Sequelize.DataTypes.BIGINT,
+        allowNull: false,
+        references: {
+          model: 'authors',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      book_id: {
+        type: Sequelize.DataTypes.BIGINT,
+        allowNull: false,
+        references: {
+          model: 'books',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      created_at: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.DataTypes.NOW,
+      },
+      updated_at: {
+        type: Sequelize.DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.DataTypes.NOW,
+      },
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
     // Drop tables in reverse order
+    await queryInterface.dropTable('author_books');
     await queryInterface.dropTable('books');
     await queryInterface.dropTable('shelves');
     await queryInterface.dropTable('categories');

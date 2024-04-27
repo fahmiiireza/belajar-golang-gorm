@@ -1,9 +1,17 @@
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../../sequelize';
 
+class Category extends Model {
+  public id!: number;
+  public name!: string;
+  public description?: string;
+  public created_at!: Date;
+  public updated_at!: Date;
+  public deleted_at?: Date;
+}
 
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../sequelize';
-
-const Category = sequelize.define('Category', {
+Category.init(
+  {
     id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
@@ -29,7 +37,15 @@ const Category = sequelize.define('Category', {
     deleted_at: {
       type: DataTypes.DATE,
     },
-  });
-
+  },
+  {
+    sequelize,
+    modelName: 'Category',
+    timestamps: true,
+    paranoid: true,
+    tableName: 'categories',
+    underscored: true,
+  }
+);
 
 export default Category;

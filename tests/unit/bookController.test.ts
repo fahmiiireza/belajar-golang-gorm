@@ -22,9 +22,9 @@ jest.mock('../../src/models/book');
 const mockBookData = {
     ...mockBookRequest,
     id: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
+    created_at: new Date(),
+    updated_at: new Date(),
+    deleted_at: null,
   };
 
 describe('createBook', () => {
@@ -58,37 +58,37 @@ describe('createBook', () => {
         shelfId: mockBookData.shelfId,
         categoryId: mockBookData.categoryId,
         description: mockBookData.description,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-        deletedAt: mockBookData.deletedAt,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+        deleted_at: mockBookData.deleted_at,
       })
     );
   });
-  // test('should return 400 if book with the same ISBN already exists', async () => {
-  //   // Mock request object with the necessary properties for creating a book
-  //   const req = {
-  //     body: mockBookRequest,
-  //   } as Request;
+  test('should return 400 if book with the same ISBN already exists', async () => {
+    // Mock request object with the necessary properties for creating a book
+    const req = {
+      body: mockBookRequest,
+    } as Request;
 
-  //   // Mock response object with status and json methods
-  //   const res = {
-  //     status: jest.fn().mockReturnThis(),
-  //     json: jest.fn(),
-  //   } as unknown as Response;
+    // Mock response object with status and json methods
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
 
-  //   // Mock the behavior of Book.findOne to simulate an existing book with the same ISBN
-  //   (Book.findOne as jest.Mock).mockResolvedValue(mockBookData);
+    // Mock the behavior of Book.findOne to simulate an existing book with the same ISBN
+    (Book.findOne as jest.Mock).mockResolvedValue(mockBookData);
 
-  //   // Call the controller function
-  //   await createBook(req, res);
+    // Call the controller function
+    await createBook(req, res);
 
-  //   // Assert that the response status and json methods were called with the expected values
-  //   expect(res.status).toHaveBeenCalledWith(400);
-  //   expect(res.json).toHaveBeenCalledWith({
-  //     error: 'Book with the same ISBN already exists',
-  //   });
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: 'Book with the same ISBN already exists',
+    });
 
-  // })
+  })
 });
 
 // describe('updateBook', () => {
@@ -115,9 +115,9 @@ describe('createBook', () => {
 //         shelfId: mockBookData.shelfId,
 //         categoryId: mockBookData.categoryId,
 //         description: mockBookData.description,
-//         createdAt: expect.any(Date),
-//         updatedAt: expect.any(Date),
-//         deletedAt: mockBookData.deletedAt,
+//         created_at: expect.any(Date),
+//         updated_at: expect.any(Date),
+//         deleted_at: mockBookData.deleted_at,
 //       })
 //     );
 //   });

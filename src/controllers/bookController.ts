@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import Book from '../models/book'; // Import your Book model
+import Book from '../models/book'; 
+import Author from '../models/author';
+import Shelf from '../models/shelf';
+import Category from '../models/category';
 import {
   ValidationError,
   UniqueConstraintError,
@@ -108,7 +111,13 @@ import {
 
 async function getBookById(req: Request, res: Response) {
     try {
-        const book = await Book.findByPk(req.params.id);
+        // const book = await Book.findByPk(req.params.id,);
+        const book = await Book.findOne({ where: { id: req.params.id }, 
+          include: [
+            { model: Category },
+            { model: Author },
+            { model: Shelf }
+          ]});
         if (!book) {
         return res.status(404).json({ error: 'Book not found' });
         }
