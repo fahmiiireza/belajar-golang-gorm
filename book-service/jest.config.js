@@ -5,5 +5,7 @@ module.exports = {
       '^@/(.*)$': '<rootDir>/src/$1',
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    testMatch: ['**/*.test.ts', '!**/dist/**/*.test.ts'], // Exclude tests inside the dist folder
+
   };
   

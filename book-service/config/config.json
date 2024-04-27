@@ -10,10 +10,10 @@
   "test": {
     "username": "postgres",
     "password": "postgres",
-    "database": "database_test",
-    "host": "host.docker.internal",
+    "database": "nodejs-db",
+    "host": "localhost",
     "dialect": "postgres",
-    "port": 5434
+    "port": 5435
   },
   "production": {
     "username": "root",

@@ -1,9 +1,18 @@
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../../sequelize';
 
+class Shelf extends Model {
+  public id!: number;
+  public floor!: number;
+  public section!: number;
+  public bookCapacity!: number;
+  public created_at!: Date;
+  public updated_at!: Date;
+  public deleted_at?: Date;
+}
 
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../sequelize';
-
-const Shelf = sequelize.define('Shelf', {
+Shelf.init(
+  {
     id: {
       type: DataTypes.BIGINT,
       primaryKey: true,
@@ -34,6 +43,15 @@ const Shelf = sequelize.define('Shelf', {
     deleted_at: {
       type: DataTypes.DATE,
     },
-  });
-  
+  },
+  {
+    sequelize,
+    modelName: 'Shelf',
+    timestamps: true,
+    paranoid: true,
+    tableName: 'shelves',
+    underscored: true,
+  }
+);
+
 export default Shelf;

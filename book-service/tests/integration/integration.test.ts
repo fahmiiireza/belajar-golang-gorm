@@ -1,47 +1,46 @@
-// Import necessary modules and libraries
-import supertest from 'supertest'; // For testing HTTP endpoints
-import {app} from '../../index'; // Assuming your server is defined in app.ts
-import  sequelize  from '../../sequelize'; // Assuming you're using Sequelize for database operations
-
-// Define test cases
+import supertest from 'supertest'; 
+import  testServer  from './testServer';
+import  sequelize  from '../../sequelize'; 
 describe('Integration Tests', () => {
-  // Set up before running tests
   beforeAll(async () => {
-    // Connect to the database
     await sequelize.authenticate();
-    // Other setup tasks like seeding the database or starting the server
   });
-
-  // Test case 1: Testing an API endpoint
+  afterEach(async () => {
+    testServer.close();
+  });
   test('GET /api/books returns a list of books', async () => {
-    // Make an API request using supertest
-    const response = await supertest(app).get('/books');
-    // Assert the response status code and content
+    const response = await supertest(testServer).get('/books')
+    .set('Accept', 'application/json');
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1); // Assuming there are 3 books in the database
   });
-
-  // Test case 2: Testing database operations
   test('Creating a new book adds it to the database', async () => {
-    // Make a request to create a new book
-    const response = await supertest(app)
+    const response = await supertest(testServer)
       .post('/books')
+      .set('Accept', 'application/json')
       .send({
         title: 'New Book',
         author: 'John Doe',
+        isbn: '1234567890',
+        language: 'English',
+        total_copy: 10,
+        shelf_id: 1,
+        category_id: 1,
       });
-    // Assert the response status code
     expect(response.status).toBe(201);
-    // Assert that the book was added to the database
-    // Implement your assertion logic based on your database model
   });
 
-  // Add more test cases as needed
-  
-  // Clean up after running tests
   afterAll(async () => {
-    // Disconnect from the database
     await sequelize.close();
-    // Other teardown tasks
+   testServer.close(); 
   });
 });
+
+// docker exec -it 0400b9e49e99 /bin/bash 
+
+
+
+
+
+
+  // // Add more test cases as needed
+  

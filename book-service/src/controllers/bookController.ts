@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import Book from '../models/book'; // Import your Book model
+import Book from '../models/book'; 
+import Author from '../models/author';
+import Shelf from '../models/shelf';
+import Category from '../models/category';
 import {
   ValidationError,
   UniqueConstraintError,
@@ -17,10 +20,12 @@ import {
       category_id,
       description,
     } = req.body;
-
+    console.log('start');
     // Check if a book with the same ISBN already exists
     const existingBook = await Book.findOne({ where: { isbn } });
     if (existingBook) {
+      console.log('Book with the same ISBN already exists');
+      console.log(existingBook);
       return res
         .status(400)
         .json({ error: 'Book with the same ISBN already exists' });
@@ -39,6 +44,7 @@ import {
 
     res.status(201).json(book);
   } catch (error: any) {
+    console.log(error);
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError ||
@@ -97,9 +103,9 @@ import {
     }
   }
 
- async function getAllBooks(res: Response) {
+ async function getAllBooks(req: Request,res: Response) {
   try {
-    const books = await Book.findAll();
+  const books = await Book.findAll();
     res.status(200).json(books);
   } catch (error) {
     console.error('Error getting all books:', error);
@@ -108,7 +114,13 @@ import {
 
 async function getBookById(req: Request, res: Response) {
     try {
-        const book = await Book.findByPk(req.params.id);
+        // const book = await Book.findByPk(req.params.id,);
+        const book = await Book.findOne({ where: { id: req.params.id }, 
+          include: [
+            { model: Category },
+            { model: Author },
+            { model: Shelf }
+          ]});
         if (!book) {
         return res.status(404).json({ error: 'Book not found' });
         }

@@ -7,17 +7,16 @@ services:
       - '3000:3000' 
     restart: always
     depends_on:
-      - book-db
+      - nodejs-db
     environment:
       - PORT=3000
-      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db  
+      - DB_URL=postgresql://postgres:postgres@nodejs-db:5432/nodejs-db  
       - SECRET_KEY=fahmi
 
-
-  book-db: 
+  nodejs-db: 
     image: postgres:16-alpine
     ports:
-      - 5434:5432
+      - 5435:5432
     restart: always
     environment:
       POSTGRES_PASSWORD: password

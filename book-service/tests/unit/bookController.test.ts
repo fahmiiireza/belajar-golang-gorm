@@ -1,81 +1,95 @@
-// import { Request, Response } from 'express';
-// import {
-//   createBook,
-//   getAllBooks,
-//   updateBook,
-//   getBookById,
-//   deleteBook,
-// } from '../../src/controllers/bookController';
+import { Request, Response } from 'express';
+import {
+  createBook,
+} from '../../src/controllers/bookController';
 // import  {mockBookData, mockBookRequest}  from '../../__mocks__/book';
 
-// import Book from '../../src/models/book';
-// jest.mock('../../src/models/book', () => ({
-//   findOne: jest.fn(),
-//   create: jest.fn(),
-// }));
+import Book from '../../src/models/book';
+jest.mock('../../src/models/book');
 
-// describe('createBook', () => {
-//   test('should create a new book based on valid request body given', async () => {
-//     const req = {
-//       body: mockBookRequest,
-//     } as Request;
 
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     } as unknown as Response;
 
-//     (Book.findOne as jest.Mock).mockResolvedValue(null);
+  const mockBookRequest = {
+    isbn: '9780743273564',
+    title: 'Mock Book',
+    language: 'English',
+    totalCopy: 1,
+    shelfId: 1,
+    categoryId: 1,
+    description: 'Mock description',
+  };
 
-//     (Book.create as jest.Mock).mockResolvedValue(mockBookData);
+const mockBookData = {
+    ...mockBookRequest,
+    id: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+    deleted_at: null,
+  };
 
-//     // Call the controller function
-//     await createBook(req, res);
+describe('createBook', () => {
+  test('should create a new book based on valid request body given', async () => {
 
-//     // Assert that the response status and json methods were called with the expected values
-//     expect(res.status).toHaveBeenCalledWith(201);
-//     expect(res.json).toHaveBeenCalledWith(
-//       expect.objectContaining({
-//         id: mockBookData.id,
-//         isbn: mockBookData.isbn,
-//         title: mockBookData.title,
-//         language: mockBookData.language,
-//         totalCopy: mockBookData.totalCopy,
-//         shelfId: mockBookData.shelfId,
-//         categoryId: mockBookData.categoryId,
-//         description: mockBookData.description,
-//         createdAt: expect.any(Date),
-//         updatedAt: expect.any(Date),
-//         deletedAt: mockBookData.deletedAt,
-//       })
-//     );
-//   });
-//   test('should return 400 if book with the same ISBN already exists', async () => {
-//     // Mock request object with the necessary properties for creating a book
-//     const req = {
-//       body: mockBookRequest,
-//     } as Request;
+    const req = {
+      body: mockBookRequest,
+    } as Request;
 
-//     // Mock response object with status and json methods
-//     const res = {
-//       status: jest.fn().mockReturnThis(),
-//       json: jest.fn(),
-//     } as unknown as Response;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
 
-//     // Mock the behavior of Book.findOne to simulate an existing book with the same ISBN
-//     (Book.findOne as jest.Mock).mockResolvedValue(mockBookData);
+    (Book.findOne as jest.Mock).mockResolvedValue(null);
 
-//     // Call the controller function
-//     await createBook(req, res);
+    (Book.create as jest.Mock).mockResolvedValue(mockBookData);
 
-//     // Assert that the response status and json methods were called with the expected values
-//     expect(res.status).toHaveBeenCalledWith(400);
-//     expect(res.json).toHaveBeenCalledWith({
-//       error: 'Book with the same ISBN already exists',
-//     });
+    // Call the controller function
+    await createBook(req, res);
 
-//   })
-// });
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: mockBookData.id,
+        isbn: mockBookData.isbn,
+        title: mockBookData.title,
+        language: mockBookData.language,
+        totalCopy: mockBookData.totalCopy,
+        shelfId: mockBookData.shelfId,
+        categoryId: mockBookData.categoryId,
+        description: mockBookData.description,
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+        deleted_at: mockBookData.deleted_at,
+      })
+    );
+  });
+  test('should return 400 if book with the same ISBN already exists', async () => {
+    // Mock request object with the necessary properties for creating a book
+    const req = {
+      body: mockBookRequest,
+    } as Request;
+
+    // Mock response object with status and json methods
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    // Mock the behavior of Book.findOne to simulate an existing book with the same ISBN
+    (Book.findOne as jest.Mock).mockResolvedValue(mockBookData);
+
+    // Call the controller function
+    await createBook(req, res);
+
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: 'Book with the same ISBN already exists',
+    });
+
+  })
+});
 
 // describe('updateBook', () => {
 //   test('should update an existing book', async () => {
@@ -101,9 +115,9 @@
 //         shelfId: mockBookData.shelfId,
 //         categoryId: mockBookData.categoryId,
 //         description: mockBookData.description,
-//         createdAt: expect.any(Date),
-//         updatedAt: expect.any(Date),
-//         deletedAt: mockBookData.deletedAt,
+//         created_at: expect.any(Date),
+//         updated_at: expect.any(Date),
+//         deleted_at: mockBookData.deleted_at,
 //       })
 //     );
 //   });
@@ -123,69 +137,69 @@
 //     expect(res.json).toHaveBeenCalledWith({ error: 'Book not found' });
 //   });
 // });
-// // describe('updateBook', () => {
-// //     test('should update an existing book', async () => {
-// //       const req = { params: { id: /* provide valid book ID */ }, body: { /* provide valid book data to update */ } } as Request;
-// //       const res = {
-// //         status: jest.fn().mockReturnThis(),
-// //         json: jest.fn(),
-// //       } as unknown as Response;
+// describe('updateBook', () => {
+//     test('should update an existing book', async () => {
+//       const req = { params: { id: /* provide valid book ID */ }, body: { /* provide valid book data to update */ } } as Request;
+//       const res = {
+//         status: jest.fn().mockReturnThis(),
+//         json: jest.fn(),
+//       } as unknown as Response;
 
-// //       await updateBook(req, res);
+//       await updateBook(req, res);
 
-// //       expect(res.status).toHaveBeenCalledWith(200);
-// //       expect(res.json).toHaveBeenCalledWith(expect.any(Object));
-// //     });
+//       expect(res.status).toHaveBeenCalledWith(200);
+//       expect(res.json).toHaveBeenCalledWith(expect.any(Object));
+//     });
 
-// //     // Add more test cases for edge cases, validation, error handling, etc.
-// //   });
+//     // Add more test cases for edge cases, validation, error handling, etc.
+//   });
 
-// // describe('getAllBooks', () => {
-// //     test('should get all books', async () => {
-// //       const res = {
-// //         status: jest.fn().mockReturnThis(),
-// //         json: jest.fn(),
-// //       } as unknown as Response;
+// describe('getAllBooks', () => {
+//     test('should get all books', async () => {
+//       const res = {
+//         status: jest.fn().mockReturnThis(),
+//         json: jest.fn(),
+//       } as unknown as Response;
 
-// //       await getAllBooks(res);
+//       await getAllBooks(res);
 
-// //       expect(res.status).toHaveBeenCalledWith(200);
-// //       expect(res.json).toHaveBeenCalledWith(expect.any(Array));
-// //     });
+//       expect(res.status).toHaveBeenCalledWith(200);
+//       expect(res.json).toHaveBeenCalledWith(expect.any(Array));
+//     });
 
-// //     // Add more test cases for edge cases, error handling, etc.
-// //   });
+//     // Add more test cases for edge cases, error handling, etc.
+//   });
 
-// // describe('getBookById', () => {
-// //     test('should get a book by ID', async () => {
-// //       const req = { params: { id: 1 } } as Request;
-// //       const res = {
-// //         status: jest.fn().mockReturnThis(),
-// //         json: jest.fn(),
-// //       } as unknown as Response;
+// describe('getBookById', () => {
+//     test('should get a book by ID', async () => {
+//       const req = { params: { id: 1 } } as Request;
+//       const res = {
+//         status: jest.fn().mockReturnThis(),
+//         json: jest.fn(),
+//       } as unknown as Response;
 
-// //       await getBookById(req, res);
+//       await getBookById(req, res);
 
-// //       expect(res.status).toHaveBeenCalledWith(200);
-// //       expect(res.json).toHaveBeenCalledWith(expect.any(Object));
-// //     });
+//       expect(res.status).toHaveBeenCalledWith(200);
+//       expect(res.json).toHaveBeenCalledWith(expect.any(Object));
+//     });
 
-// //     // Add more test cases for edge cases, error handling, etc.
-// //   });
+//     // Add more test cases for edge cases, error handling, etc.
+//   });
 
-// // describe('deleteBook', () => {
-// //     test('should delete a book by ID', async () => {
-// //       const req = { params: { id: /* provide valid book ID */ } } as Request;
-// //       const res = {
-// //         status: jest.fn().mockReturnThis(),
-// //         send: jest.fn(),
-// //       } as unknown as Response;
+// describe('deleteBook', () => {
+//     test('should delete a book by ID', async () => {
+//       const req = { params: { id: /* provide valid book ID */ } } as Request;
+//       const res = {
+//         status: jest.fn().mockReturnThis(),
+//         send: jest.fn(),
+//       } as unknown as Response;
 
-// //       await deleteBook(req, res);
+//       await deleteBook(req, res);
 
-// //       expect(res.status).toHaveBeenCalledWith(204);
-// //       expect(res.send).toHaveBeenCalled();
-// //     });
+//       expect(res.status).toHaveBeenCalledWith(204);
+//       expect(res.send).toHaveBeenCalled();
+//     });
 
-// //     // Add more test cases for edge cases, error handling, etc.
-// //   });
+//     // Add more test cases for edge cases, error handling, etc.
+//   });
