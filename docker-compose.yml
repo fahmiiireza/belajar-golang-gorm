@@ -22,6 +22,7 @@ services:
       - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db
       - SECRET_KEY=fahmi
 
+
   book-service:
     build: ./book-service
     ports:

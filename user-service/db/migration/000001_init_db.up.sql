@@ -47,3 +47,26 @@ CREATE TABLE "librarians" (
 
 ALTER TABLE "admins" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 ALTER TABLE "librarians" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+
+
+-- SEEDING
+-- Insert data into the users table
+-- INSERT INTO users (username, password, full_name, email, role)
+-- VALUES
+--     ('admin', 'admin_password', 'Admin User', 'admin@example.com', 'ADMIN'),
+--     ('librarian1', 'librarian_password', 'Librarian One', 'librarian1@example.com', 'LIBRARIAN'),
+--     ('librarian2', 'librarian_password', 'Librarian Two', 'librarian2@example.com', 'LIBRARIAN'),
+--     ('student1', 'student_password', 'Student One', 'student1@example.com', 'STUDENT'),
+--     ('student2', 'student_password', 'Student Two', 'student2@example.com', 'STUDENT');
+
+-- -- Insert data into the admins table
+-- INSERT INTO admins (salary, employment_status, user_id)
+-- VALUES
+--     (50000, 'FULLTIME', (SELECT id FROM users WHERE username = 'admin'));
+
+-- -- Insert data into the librarians table
+-- INSERT INTO librarians (salary, employment_status, joining_date, user_id)
+-- VALUES
+--     (40000, 'FULLTIME', '2023-01-01', (SELECT id FROM users WHERE username = 'librarian1')),
+--     (35000, 'PARTTIME', '2023-01-01', (SELECT id FROM users WHERE username = 'librarian2'));
+
