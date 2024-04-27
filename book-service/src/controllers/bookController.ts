@@ -46,6 +46,7 @@ import {
     ) {
       return res.status(400).json({ error: error.message });
     } else {
+        console.log(error);
       return res.status(500).send('Internal server error');
     }
   }

@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  book-service:
+    build: .
+    ports:
+      - '3000:3000' 
+    restart: always
+    depends_on:
+      - book-db
+    environment:
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db  
+      - SECRET_KEY=fahmi
+
+
+  book-db: 
+    image: postgres:16-alpine
+    ports:
+      - 5434:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
