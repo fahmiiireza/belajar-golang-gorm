@@ -1,6 +1,10 @@
 build:
 	docker compose up --build
 migrateup:
-	migrate -path migrate -database "postgresql://user:password@db:5432/library?sslmode=disable" -verbose up 
+	npx sequelize-cli db:migrate
 migratedown:
-	migrate -path migrate -database "postgresql://user:password@db:5432/library?sslmode=disable" -verbose down 
+	npx sequelize-cli db:migrate:undo
+seedup:
+	npx sequelize-cli db:seed:all
+seeddown:
+	npx sequelize-cli db:seed:undo:all

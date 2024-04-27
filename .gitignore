@@ -57,3 +57,4 @@ Thumbs.db
 
 book-service/dist
 .DS_Store
+node_modules
