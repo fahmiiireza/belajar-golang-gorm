@@ -1,46 +1,50 @@
-import supertest from 'supertest'; 
-import  testServer  from './testServer';
-import  sequelize  from '../../sequelize'; 
-describe('Integration Tests', () => {
+import supertest from 'supertest';
+import testServer from './testServer';
+import sequelize from '../../sequelize';
+import { userAuthData, mockBookData, mockBookRequest } from '../testData';
+
+describe('Book CRUD', () => {
+  let authToken: string;
   beforeAll(async () => {
     await sequelize.authenticate();
+
+    const loginResponse = await supertest('http://user-service:8080')
+      .post('/login')
+      .send(userAuthData);
+    authToken = loginResponse.body.token;
   });
-  afterEach(async () => {
-    testServer.close();
-  });
-  test('GET /api/books returns a list of books', async () => {
-    const response = await supertest(testServer).get('/books')
-    .set('Accept', 'application/json');
+
+  test('GET /books returns a list of books', async () => {
+    const response = await supertest(testServer)
+      .get('/books')
+      .set('Authorization', `Bearer ${authToken}`);
+
     expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
   });
-  test('Creating a new book adds it to the database', async () => {
+
+  test('POST /books create a new book', async () => {
     const response = await supertest(testServer)
       .post('/books')
-      .set('Accept', 'application/json')
-      .send({
-        title: 'New Book',
-        author: 'John Doe',
-        isbn: '1234567890',
-        language: 'English',
-        total_copy: 10,
-        shelf_id: 1,
-        category_id: 1,
-      });
+      .set('Authorization', `Bearer ${authToken}`)
+      .send(mockBookRequest);
+
     expect(response.status).toBe(201);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        description: mockBookData.description,
+        isbn: mockBookData.isbn,
+        title: mockBookData.title,
+      })
+    );
   });
 
   afterAll(async () => {
     await sequelize.close();
-   testServer.close(); 
+    testServer.close();
   });
 });
 
-// docker exec -it 0400b9e49e99 /bin/bash 
+// docker exec -it 0400b9e49e99 /bin/bash
 
-
-
-
-
-
-  // // Add more test cases as needed
-  
+// // Add more test cases as needed

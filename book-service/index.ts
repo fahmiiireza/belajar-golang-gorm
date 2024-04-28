@@ -1,14 +1,20 @@
 // index.ts
-
+// TODO: make failed tests
+//  make tests for all routes
+// LEARN ABOUT TESTING
+// LEARN ABOUT SPA VS MPA
+// UPDATE ROOT MAKEFILE TO ALSO HANDLE THE BOOK-SERVICE
+// LEARN ABOUT MICROSERVICES
+// UPDATE NOTION TO FILL WITH ALL OF THIS TASK
 import express, { Request, Response } from 'express';
 import sequelize from './sequelize';
 import bookRoutes from './src/routes/bookRoutes'; // Import book routes
-import { CustomRequest, verifyToken } from './src/middlewares/authMiddleware';
+import { verifyToken } from './src/middlewares/authMiddleware';
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-// app.use(verifyToken)
+app.use(verifyToken)
 app.use('/books', bookRoutes);
 
 app.get('/', (req: Request, res: Response) => {

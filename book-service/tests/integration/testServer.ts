@@ -1,6 +1,7 @@
 // testServer.ts
 
 import express from 'express';
+import { verifyToken } from '../../src/middlewares/authMiddleware';
 
 import bookRoutes from '../../src/routes/bookRoutes'; // Import book routes
 const testApp = express();
@@ -10,7 +11,7 @@ const testPort = 4000; // Choose any port you like for testing
 // For example:
 
 testApp.use(express.json());
-// app.use(verifyToken)
+testApp.use(verifyToken)
 testApp.use('/books', bookRoutes);
 testApp.get('/', (req, res) => {
   res.send('Test server is running');
