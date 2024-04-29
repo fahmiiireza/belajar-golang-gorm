@@ -42,11 +42,13 @@ CREATE TABLE "librarians" (
   "salary" integer NOT NULL,
   "employment_status" employment_status NOT NULL,
   "joining_date" date NOT NULL,
+  "created_by" integer NOT NULL,
   "user_id" integer UNIQUE NOT NULL
 );
 
 ALTER TABLE "admins" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 ALTER TABLE "librarians" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "librarians" ADD FOREIGN KEY ("created_by") REFERENCES "admins" ("id");
 
 
 -- SEEDING

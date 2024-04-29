@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.SECRET_KEY || '';
-interface DecodedToken {
+export interface DecodedToken {
   username: string; // Adjust this according to your JWT payload structure
   role: string;
   exp: number;
@@ -27,4 +27,16 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
   } catch (error) {
     return res.status(401).json({ error: 'Unauthorized: Invalid token' });
   }
+}
+
+export function checkRole(req: Request, res: Response, next: NextFunction) {
+  const { decodedToken } = (req as CustomRequest);
+  console.log(decodedToken);
+  if (decodedToken.role !== 'LIBRARIAN') {
+    return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
+  }
+
+  // console.log(req.)
+
+  next();
 }

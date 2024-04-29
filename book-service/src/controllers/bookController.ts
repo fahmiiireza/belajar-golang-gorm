@@ -70,7 +70,6 @@ async function updateBook(req: Request, res: Response) {
     if (!bookToUpdate) {
       return res.status(404).json({ error: 'Book not found' });
     }
-    console.log('bookToUpdate', bookToUpdate);
     const updatedBook = await Book.update(
       {
         isbn,
@@ -83,7 +82,6 @@ async function updateBook(req: Request, res: Response) {
       },
       { where: { id: req.params.id } }
     );
-    console.log('updatedBook', updatedBook);
     res.status(200).json(updatedBook);
   } catch (error: any) {
     console.log('error', error);
@@ -130,10 +128,11 @@ async function deleteBook(req: Request, res: Response) {
     if (!bookToDelete) {
       return res.status(404).json({ error: 'Book not found' });
     }
-    await bookToDelete.destroy();
+    await Book.destroy({ where: { id: req.params.id } });
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting book:', error);
   }
 }
+
 export { createBook, getAllBooks, updateBook, getBookById, deleteBook };

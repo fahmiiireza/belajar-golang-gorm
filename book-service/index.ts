@@ -9,7 +9,7 @@
 import express, { Request, Response } from 'express';
 import sequelize from './sequelize';
 import bookRoutes from './src/routes/bookRoutes'; // Import book routes
-import { verifyToken } from './src/middlewares/authMiddleware';
+import { verifyToken } from './src/middleware';
 const app = express();
 const port = process.env.PORT || 3000;
 

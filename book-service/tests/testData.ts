@@ -18,7 +18,7 @@ const mockBookData = {
   };
 
 const userAuthData = {
-    username: 'admin123',
-    password: 'admin123',
+    username: 'librarian123',
+    password: 'librarian123',
   }
   export { mockBookRequest, mockBookData, userAuthData };

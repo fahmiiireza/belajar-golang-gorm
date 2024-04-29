@@ -24,11 +24,3 @@ const (
 	SexMale   Sex = "MALE"
 	SexFemale Sex = "FEMALE"
 )
-
-type BorrowStatus string
-
-const (
-	BorrowStatusBorrowed      BorrowStatus = "BORROWED"
-	BorrowStatusPartialReturn BorrowStatus = "PARTIAL_RETURN"
-	BorrowStatusAllReturn     BorrowStatus = "ALL_RETURN"
-)

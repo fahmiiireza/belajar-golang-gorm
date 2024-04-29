@@ -10,7 +10,6 @@ type Librarian struct {
 	CreatedBy        uint             `gorm:"not null"`
 	UserID           uint             `gorm:"not null"`
 	User             User
-	Borrows          []Borrow
 }
 
 // type Librarian struct {

@@ -1,7 +1,7 @@
 // testServer.ts
 
 import express from 'express';
-import { verifyToken } from '../../src/middlewares/authMiddleware';
+import { verifyToken } from '../../src/middleware';
 
 import bookRoutes from '../../src/routes/bookRoutes'; // Import book routes
 const testApp = express();

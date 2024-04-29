@@ -2,6 +2,7 @@ import supertest from 'supertest';
 import testServer from './testServer';
 import sequelize from '../../sequelize';
 import { userAuthData, mockBookData, mockBookRequest } from '../testData';
+import Book from '../../src/models/book';
 
 describe('Book CRUD', () => {
   let authToken: string;
@@ -37,7 +38,9 @@ describe('Book CRUD', () => {
         title: mockBookData.title,
       })
     );
+    await Book.destroy({ where: { isbn: mockBookData.isbn }, force: true });
   });
+  test('PATCH /books/:id updates a book', async () => {});
 
   afterAll(async () => {
     await sequelize.close();

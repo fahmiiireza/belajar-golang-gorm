@@ -9,5 +9,4 @@ type Student struct {
 	ClassID   uint      `gorm:"not null"`
 	UserID    uint
 	User      User
-	Borrows   []Borrow
 }
