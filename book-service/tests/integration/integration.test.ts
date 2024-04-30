@@ -68,8 +68,6 @@ describe('Book CRUD', () => {
   //   expect(response.status).toBe(200);
   //   expect(response.body).toBeInstanceOf(Array);
   // });
-
-
 });
 
 describe('CRUD Validation', () => {
@@ -100,7 +98,7 @@ describe('CRUD Validation', () => {
     expect(response.body.error).toBe('Book with the same ISBN already exists');
 
     await Book.destroy({ where: { isbn: newBook.isbn }, force: true });
-  })
+  });
   test('Create book handles validation where theres missing field', async () => {
     const response = await supertest(testServer)
       .post('/books')
@@ -128,12 +126,12 @@ describe('CRUD Validation', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .send({ isbn: createdBook.isbn });
 
-      await Book.destroy({ where: { id: createdBook.id }, force: true });
-      await Book.destroy({ where: { id: bookToUpdate.id }, force: true });
+    await Book.destroy({ where: { id: createdBook.id }, force: true });
+    await Book.destroy({ where: { id: bookToUpdate.id }, force: true });
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Cannot update ISBN, already exists');
-  })
-  test('Update book handles trying to update a non existent book',async () => {
+  });
+  test('Update book handles trying to update a non existent book', async () => {
     const response = await supertest(testServer)
       .patch('/books/1000')
       .set('Authorization', `Bearer ${authToken}`)
@@ -141,7 +139,7 @@ describe('CRUD Validation', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('Book not found');
-  })
+  });
 
   test('Delete book handles trying to delete a non existent book', async () => {
     const response = await supertest(testServer)
@@ -150,17 +148,10 @@ describe('CRUD Validation', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('Book not found');
-  })
-  // test('PATCH', async () => {
-
-  // })
-  // test('DELETE', async () => {
-
-  // })
+  });
 
   afterAll(async () => {
     await sequelize.close();
     testServer.close();
   });
 });
-// docker exec -it 0400b9e49e99 /bin/bash
