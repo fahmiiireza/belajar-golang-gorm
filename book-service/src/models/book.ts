@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../sequelize';
 import Shelf from './shelf';
 import Category from './category';
-import Author from './author'; // Import Author model
+import Author from './author'; 
 
 class Book extends Model {
   public id!: number;
@@ -50,7 +50,7 @@ Book.init(
       field: 'total_copy',
       validate: {
         notZero(value: number) {
-          if (value === 0) {
+          if (value <= 0) {
             throw new Error('totalCopy cannot be 0');
           }
         },
@@ -94,15 +94,15 @@ Book.init(
     sequelize,
     modelName: 'Book',
     timestamps: true,
-    paranoid: true, // Enable soft deletes
-    tableName: 'books', // Specify the table name if different from the model name
-    underscored: true, // Enable snake_case column names
+    paranoid: true, 
+    tableName: 'books',
+    underscored: true, 
   }
 );
 
 // Define associations
-Book.belongsTo(Shelf, { foreignKey: 'shelfId' }); // Many-to-one with Shelf
-Book.belongsTo(Category, { foreignKey: 'categoryId' }); // Many-to-one with Category
-Book.belongsToMany(Author, { through: 'author_books', foreignKey: 'book_id' }); // Many-to-many with Author
+Book.belongsTo(Shelf, { foreignKey: 'shelfId' });
+Book.belongsTo(Category, { foreignKey: 'categoryId' }); 
+Book.belongsToMany(Author, { through: 'author_books', foreignKey: 'book_id' });
 
 export default Book;
