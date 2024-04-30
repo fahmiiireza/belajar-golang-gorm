@@ -33,10 +33,16 @@ Book.init(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
     },
     language: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
     },
     totalCopy: {
       type: DataTypes.INTEGER,
@@ -53,10 +59,16 @@ Book.init(
     shelfId: {
       type: DataTypes.INTEGER,
       field: 'shelf_id',
+      validate: {
+        isNumeric: true,
+      }
     },
     categoryId: {
       type: DataTypes.INTEGER,
       field: 'category_id',
+      validate: {
+        isNumeric: true,
+      }
     },
     description: {
       type: DataTypes.STRING,

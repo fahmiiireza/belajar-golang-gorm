@@ -81,7 +81,7 @@ describe('CRUD Validation', () => {
     authToken = loginResponse.body.token;
   });
 
-  test('GET one book with invalid id', async () => {
+  test('Get one book with invalid id', async () => {
     const response = await supertest(testServer)
       .get('/books/100')
       .set('Authorization', `Bearer ${authToken}`);
@@ -110,6 +110,15 @@ describe('CRUD Validation', () => {
     expect(response.status).toBe(400);
     expect(response.body.error).toBeDefined();
   });
+  test('Create book handle validation of foreign key constraint', async () => {
+    const response = await supertest(testServer)
+      .post('/books')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ ...mockBookRequest, shelfId: 1000 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBeDefined();
+  });
 
   test('Update book handles validation where it tries to update ISBN that already exists ', async () => {
     const createdBook = await Book.create(mockBookRequest);
@@ -123,6 +132,24 @@ describe('CRUD Validation', () => {
       await Book.destroy({ where: { id: bookToUpdate.id }, force: true });
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Cannot update ISBN, already exists');
+  })
+  test('Update book handles trying to update a non existent book',async () => {
+    const response = await supertest(testServer)
+      .patch('/books/1000')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send(mockBookRequestForUpdate);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Book not found');
+  })
+
+  test('Delete book handles trying to delete a non existent book', async () => {
+    const response = await supertest(testServer)
+      .delete('/books/1000')
+      .set('Authorization', `Bearer ${authToken}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Book not found');
   })
   // test('PATCH', async () => {
 
