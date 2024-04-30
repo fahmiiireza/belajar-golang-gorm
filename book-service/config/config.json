@@ -14,7 +14,7 @@
     "host": "localhost",
     "dialect": "postgres",
     "port": 5435
-  },
+  }, 
   "production": {
     "username": "root",
     "password": null,

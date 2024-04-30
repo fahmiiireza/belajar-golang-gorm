@@ -2,11 +2,11 @@
 
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('nodejs-db', 'postgres', 'postgres', {
-    port: 5435,
+const sequelize = new Sequelize('book-db', 'postgres', 'postgres', {
+    port: 5434,
     host: 'host.docker.internal',
     password: 'postgres',
-    database: 'nodejs-db',
+    database: 'book-db',
     dialect: 'postgres',
     username: 'postgres'
 });

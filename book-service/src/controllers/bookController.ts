@@ -8,6 +8,7 @@ import {
   UniqueConstraintError,
   ForeignKeyConstraintError,
 } from 'sequelize';
+import sequelize from 'sequelize';
 
 async function createBook(req: Request, res: Response) {
   try {
@@ -42,8 +43,9 @@ async function createBook(req: Request, res: Response) {
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError ||
-      error instanceof ForeignKeyConstraintError
-    ) {
+      error instanceof ForeignKeyConstraintError ||
+      error.message.includes('undefined')
+      ) {
       return res.status(400).json({ error: error.message });
     } else {
       return res.status(500).send('Internal server error');
@@ -70,6 +72,21 @@ async function updateBook(req: Request, res: Response) {
     if (!bookToUpdate) {
       return res.status(404).json({ error: 'Book not found' });
     }
+
+    if (isbn) {
+      const bookWithSameIsbn = await Book.findOne({
+        where: {
+          isbn,
+          id: { [sequelize.Op.not]: req.params.id },
+        },
+      });
+      if (bookWithSameIsbn) {
+        return res
+          .status(400)
+          .json({ error: 'Cannot update ISBN, already exists' });
+      }
+    }
+
     const updatedBook = await Book.update(
       {
         isbn,
@@ -84,7 +101,7 @@ async function updateBook(req: Request, res: Response) {
     );
     res.status(200).json(updatedBook);
   } catch (error: any) {
-    console.log('error', error);
+    console.error('Error updating book:', error);
     if (
       error instanceof ValidationError ||
       error instanceof UniqueConstraintError ||
@@ -109,10 +126,7 @@ async function getAllBooks(req: Request, res: Response) {
 async function getBookById(req: Request, res: Response) {
   try {
     // const book = await Book.findByPk(req.params.id,);
-    const book = await Book.findOne({
-      where: { id: req.params.id },
-      include: [{ model: Category }, { model: Author }, { model: Shelf }],
-    });
+    const book = await Book.findByPk(req.params.id)
     if (!book) {
       return res.status(404).json({ error: 'Book not found' });
     }

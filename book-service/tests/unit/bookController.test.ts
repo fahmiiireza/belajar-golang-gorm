@@ -2,8 +2,11 @@ import { Request, Response } from 'express';
 import {
   createBook,
   updateBook,
+  deleteBook,
+  getAllBooks,
+  getBookById,
 } from '../../src/controllers/bookController';
-import  {mockBookData, mockBookRequest}  from '../testData';
+import  {mockBookData, mockBookRequest,mockBooks}  from '../testData';
 
 import Book from '../../src/models/book';
 jest.mock('../../src/models/book');
@@ -12,7 +15,6 @@ jest.mock('../../src/models/book');
 
 describe('createBook', () => {
   test('should create a new book based on valid request body given', async () => {
-
     const req = {
       body: mockBookRequest,
     } as Request;
@@ -48,24 +50,19 @@ describe('createBook', () => {
     );
   });
   test('should return 400 if book with the same ISBN already exists', async () => {
-    // Mock request object with the necessary properties for creating a book
     const req = {
       body: mockBookRequest,
     } as Request;
 
-    // Mock response object with status and json methods
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     } as unknown as Response;
 
-    // Mock the behavior of Book.findOne to simulate an existing book with the same ISBN
     (Book.findOne as jest.Mock).mockResolvedValue(mockBookData);
 
-    // Call the controller function
     await createBook(req, res);
 
-    // Assert that the response status and json methods were called with the expected values
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       error: 'Book with the same ISBN already exists',
@@ -73,7 +70,72 @@ describe('createBook', () => {
 
   })
 });
+describe('getAllBooks', () => {
+  test('should return a list of books', async () => {
+    // Mock request object
+    const req = {} as unknown as Request;
 
+    // Mock response object with status and json methods
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    // Mock the behavior of Book.findAll to return a list of books
+    (Book.findAll as jest.Mock).mockResolvedValue(mockBooks);
+
+    // Call the controller function
+    await getAllBooks(req, res);
+
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(mockBooks);
+  });
+});
+
+describe('getBookById', () => {
+  test('should return a single book by its ID', async () => {
+    // Mock request object with book ID parameter
+    const req = { params: { id: mockBookData.id } } as unknown as Request;
+
+    // Mock response object with status and json methods
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    // Mock the behavior of Book.findByPk to return a single book
+    (Book.findByPk as jest.Mock).mockResolvedValue(mockBookData);
+
+    // Call the controller function
+    await getBookById(req, res);
+
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(mockBookData);
+  });
+
+  test('should return 404 if book with the given ID is not found', async () => {
+    // Mock request object with non-existing book ID parameter
+    const req = { params: { id: 100 } } as unknown as Request;
+
+    // Mock response object with status and json methods
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    // Mock the behavior of Book.findByPk to return null, indicating the book was not found
+    (Book.findByPk as jest.Mock).mockResolvedValue(null);
+
+    // Call the controller function
+    await getBookById(req, res);
+
+    // Assert that the response status and json methods were called with the expected values
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Book not found' });
+  });
+});
 describe('updateBook', () => {
   test('should update an existing book', async () => {
     const req = { params: { id: mockBookData.id }, body: {
@@ -121,7 +183,40 @@ describe('updateBook', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'Book not found' });
   });
 });
-// describe('getAllBooks', () => {
+describe('deleteBook', () => {
+  test('should delete an existing book', async () => {
+    const req = { params: { id: mockBookData.id } } as unknown as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    } as unknown as Response;
+
+    (Book.findByPk as jest.Mock).mockResolvedValue(mockBookData);
+
+    (Book.destroy as jest.Mock).mockResolvedValue(1); 
+
+    await deleteBook(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.send).toHaveBeenCalled();
+  });
+
+  test('should return 404 if book with the given ID is not found', async () => {
+    const req = { params: { id: 1 } } as unknown as Request;
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    (Book.findByPk as jest.Mock).mockResolvedValue(null);
+
+    await deleteBook(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Book not found' });
+  });
+});
+
 //     test('should get all books', async () => {
 //       const res = {
 //         status: jest.fn().mockReturnThis(),

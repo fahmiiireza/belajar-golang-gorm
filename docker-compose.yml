@@ -7,7 +7,8 @@ services:
       - 5433:5432
     restart: always
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user-db
 
   user-service:
     build: ./user-service
@@ -41,4 +42,5 @@ services:
       - 5434:5432
     restart: always
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: book-db

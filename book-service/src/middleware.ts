@@ -31,12 +31,10 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
 
 export function checkRole(req: Request, res: Response, next: NextFunction) {
   const { decodedToken } = (req as CustomRequest);
-  console.log(decodedToken);
   if (decodedToken.role !== 'LIBRARIAN') {
     return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
   }
 
-  // console.log(req.)
 
   next();
 }
