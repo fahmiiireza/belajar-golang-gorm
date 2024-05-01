@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.SECRET_KEY || '';
 export interface DecodedToken {
-  username: string; // Adjust this according to your JWT payload structure
+  username: string; 
   role: string;
   exp: number;
 }
@@ -29,7 +29,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export function checkRole(req: Request, res: Response, next: NextFunction) {
+export function checkLibrarianRole(req: Request, res: Response, next: NextFunction) {
   const { decodedToken } = (req as CustomRequest);
   if (decodedToken.role !== 'LIBRARIAN') {
     return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
