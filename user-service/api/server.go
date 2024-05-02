@@ -9,7 +9,7 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/login", login)
 	r.POST("/admins", createAdmin)
-
+	r.POST("/test", test)
 	r.Use(authMiddleware())
 
 	r.GET("/librarians", getAllLibrarian)

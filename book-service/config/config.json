@@ -3,23 +3,24 @@
     "username": "postgres",
     "password": "postgres",
     "database": "book-db",
-    "host": "localhost",
+    "host": "book-db",
     "dialect": "postgres",
-    "port": 5434
+    "port": 5432
   },
   "test": {
     "username": "postgres",
     "password": "postgres",
     "database": "nodejs-db",
-    "host": "localhost",
+    "host": "book-db",
     "dialect": "postgres",
     "port": 5435
   }, 
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "postgres",
+    "password": "postgres",
+    "database": "book-db",
+    "host": "book-db",
+    "dialect": "postgres",
+    "port": 5432
   }
 }
