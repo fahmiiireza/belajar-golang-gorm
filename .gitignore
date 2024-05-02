@@ -20,3 +20,41 @@
 # Go workspace file
 go.work
 .env
+# Ignore node_modules directory for TypeScript service
+book-service/node_modules
+
+# Ignore vendor directory for Go service
+user-service/vendor
+
+# Ignore binary executables for both services
+user-service/*.exe
+book-service/*.exe
+
+# Ignore generated files
+user-service/generated
+book-service/generated
+
+# Ignore logs and other runtime files
+user-service/logs
+book-service/logs
+
+# Ignore environment-specific files
+*.env
+
+# Ignore database dumps
+*.sql
+
+# Ignore IDE and editor-specific files
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+
+book-service/dist
+.DS_Store
+node_modules

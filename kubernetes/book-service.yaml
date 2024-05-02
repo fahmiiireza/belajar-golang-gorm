@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3000
+  selector:
+    app: book-service
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-service
+  template:
+    metadata:
+      labels:
+        app: book-service
+    spec:
+      containers:
+        - name: book-service
+          image: public.ecr.aws/p2c0c2f5/book-service:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DB_URL
+              value: "postgresql://postgres:postgres@book-db:5432/book-db?sslmode=disable"
+            - name: SECRET_KEY
+              value: "fahmi"

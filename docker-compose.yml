@@ -1,22 +1,46 @@
 version: '3'
 
 services:
-  db: 
+  user-db: 
     image: postgres:16-alpine
     ports:
       - 5433:5432
     restart: always
     environment:
-      POSTGRES_PASSWORD: password
-      SECRET_KEY: fahmi
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user-db
 
-  api:
-    build: .
+  user-service:
+    build: ./user-service
     ports:
       - 8080:8080
     restart: always
     depends_on:
-      - db
+      - user-db
+      - book-service
     environment:
       - PORT=8080
-      - DB_URL=postgresql://user:password@db:5432/library
+      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db?sslmode=disable
+      - SECRET_KEY=fahmi
+
+
+  book-service:
+    build: ./book-service
+    ports:
+      - '3000:3000' 
+    restart: always
+    depends_on:
+      - book-db
+    environment:
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db?sslmode=disable
+      - SECRET_KEY=fahmi
+
+  book-db: 
+    image: postgres:16-alpine
+    ports:
+      - 5434:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: book-db
