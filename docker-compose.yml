@@ -20,7 +20,7 @@ services:
       - book-service
     environment:
       - PORT=8080
-      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db?sslmode=disable
+      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db?
       - SECRET_KEY=fahmi
 
 
@@ -33,7 +33,7 @@ services:
       - book-db
     environment:
       - PORT=3000
-      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db?sslmode=disable
+      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db?
       - SECRET_KEY=fahmi
 
   book-db: 

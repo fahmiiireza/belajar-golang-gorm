@@ -34,6 +34,6 @@ spec:
             - name: PORT
               value: "3000"
             - name: DB_URL
-              value: "postgresql://postgres:postgres@book-db:5432/book-db?sslmode=disable"
+              value: "postgresql://postgres:postgres@book-db:5432/book-db?"
             - name: SECRET_KEY
               value: "fahmi"
