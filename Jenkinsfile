@@ -4,8 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Man4ct/belajar-golang-gorm'
-            }
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Man4ct/belajar-golang-gorm.git'            }
         }
         stage('Build') {
             steps {
