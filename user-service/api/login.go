@@ -15,6 +15,8 @@ func test(c *gin.Context) {
 func test2(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "New function"})
 }
+
+// tes
 func login(c *gin.Context) {
 	var user UserLogin
 	if err := c.BindJSON(&user); err != nil {
