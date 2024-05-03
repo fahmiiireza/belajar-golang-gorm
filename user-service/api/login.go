@@ -13,7 +13,7 @@ func test(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Hello Cluster"})
 }
 func test2(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "New function"})
+	c.JSON(http.StatusOK, gin.H{"message": "This is the new test2"})
 }
 
 func login(c *gin.Context) {
