@@ -12,6 +12,9 @@ import (
 func test(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Hello Cluster"})
 }
+func test2(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "New function"})
+}
 func login(c *gin.Context) {
 	var user UserLogin
 	if err := c.BindJSON(&user); err != nil {
