@@ -35,6 +35,6 @@ spec:
             - name: PORT
               value: "8080"
             - name: DB_URL
-              value: "postgresql://postgres:postgres@user-db:5432/user-db?sslmode=disable"
+              value: "postgresql://postgres:postgres@user-db:5432/user-db?"
             - name: SECRET_KEY
               value: "fahmi"
