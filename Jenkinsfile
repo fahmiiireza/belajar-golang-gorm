@@ -11,7 +11,7 @@ pipeline {
                 sh 'echo "Hello Jenkins"'
             }
         }
-        
+
         // stage('Build') {
         //     steps {
         //         // Build Docker images for each microservice
