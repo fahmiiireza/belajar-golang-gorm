@@ -22,9 +22,6 @@ sequelize
     console.log(
       'Connection to the database has been established successfully.'
     );
-    // If you have associations or any other setup code, you can place it here
-
-    // Run Sequelize migration
     exec('npx sequelize-cli db:migrate', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running migration: ${error}`);
@@ -32,25 +29,22 @@ sequelize
       }
       console.log(`Migration output: ${stdout}`);
 
-      // Once migration is complete, run Sequelize seeding
-      exec('npx sequelize-cli db:seed:all', (seedError, seedStdout, seedStderr) => {
-        try {
-          if (seedError) {
-            throw seedError;
+      exec(
+        'npx sequelize-cli db:seed:all',
+        (seedError, seedStdout, seedStderr) => {
+          try {
+            if (seedError) {
+              throw seedError;
+            }
+            console.log(`Seeding output: ${seedStdout}`);
+          } catch (error) {
+            console.error(`Error running seeding: ${error}`);
           }
-          console.log(`Seeding output: ${seedStdout}`);
-
-          // Start the server after migration and seeding are complete
-          app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-          });
-        } catch (error) {
-          console.error(`Error running seeding: ${error}`);
-          // Continue running the server even if seeding fails
-          app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-          });
         }
+      );
+
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
       });
     });
   })
