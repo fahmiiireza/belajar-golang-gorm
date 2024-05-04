@@ -10,6 +10,6 @@ jobs:
     steps:
       - name: Trigger Jenkins Job
         env:
-          JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+          JENKINS_TOKEN: ${{ secrets.JEKINS_TOKEN }}
         run: |
           curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=${JENKINS_TOKEN}" --user admin:${JENKINS_TOKEN}
