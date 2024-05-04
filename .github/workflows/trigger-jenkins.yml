@@ -1,0 +1,14 @@
+name: Trigger Jenkins Job
+
+on:
+  pull_request:
+    types: [closed, merged]
+
+jobs:
+  trigger-jenkins-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Jenkins Job
+        run: |
+          curl -X POST \
+               http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=fahmi-jenkin
