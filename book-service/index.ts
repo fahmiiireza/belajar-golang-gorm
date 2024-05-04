@@ -1,11 +1,4 @@
 // index.ts
-// TODO: make failed tests
-//  make tests for all routes
-// LEARN ABOUT TESTING
-// LEARN ABOUT SPA VS MPA
-// UPDATE ROOT MAKEFILE TO ALSO HANDLE THE BOOK-SERVICE
-// LEARN ABOUT MICROSERVICES
-// UPDATE NOTION TO FILL WITH ALL OF THIS TASK
 import express, { Request, Response } from 'express';
 import sequelize from './sequelize';
 import bookRoutes from './src/routes/bookRoutes'; // Import book routes
@@ -29,9 +22,6 @@ sequelize
     console.log(
       'Connection to the database has been established successfully.'
     );
-    // If you have associations or any other setup code, you can place it here
-
-    // Run Sequelize migration
     exec('npx sequelize-cli db:migrate', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error running migration: ${error}`);
@@ -39,22 +29,23 @@ sequelize
       }
       console.log(`Migration output: ${stdout}`);
 
-      // Once migration is complete, run Sequelize seeding
       exec(
         'npx sequelize-cli db:seed:all',
         (seedError, seedStdout, seedStderr) => {
-          if (seedError) {
-            console.error(`Error running seeding: ${seedError}`);
-            return;
+          try {
+            if (seedError) {
+              throw seedError;
+            }
+            console.log(`Seeding output: ${seedStdout}`);
+          } catch (error) {
+            console.error(`Error running seeding: ${error}`);
           }
-          console.log(`Seeding output: ${seedStdout}`);
-
-          // Start the server after migration and seeding are complete
-          app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-          });
         }
       );
+
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+      });
     });
   })
   .catch((error) => {
