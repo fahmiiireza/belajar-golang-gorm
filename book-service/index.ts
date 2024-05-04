@@ -1,11 +1,4 @@
 // index.ts
-// TODO: make failed tests
-//  make tests for all routes
-// LEARN ABOUT TESTING
-// LEARN ABOUT SPA VS MPA
-// UPDATE ROOT MAKEFILE TO ALSO HANDLE THE BOOK-SERVICE
-// LEARN ABOUT MICROSERVICES
-// UPDATE NOTION TO FILL WITH ALL OF THIS TASK
 import express, { Request, Response } from 'express';
 import sequelize from './sequelize';
 import bookRoutes from './src/routes/bookRoutes'; // Import book routes
@@ -40,12 +33,10 @@ sequelize
       console.log(`Migration output: ${stdout}`);
 
       // Once migration is complete, run Sequelize seeding
-      exec(
-        'npx sequelize-cli db:seed:all',
-        (seedError, seedStdout, seedStderr) => {
+      exec('npx sequelize-cli db:seed:all', (seedError, seedStdout, seedStderr) => {
+        try {
           if (seedError) {
-            console.error(`Error running seeding: ${seedError}`);
-            return;
+            throw seedError;
           }
           console.log(`Seeding output: ${seedStdout}`);
 
@@ -53,8 +44,14 @@ sequelize
           app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
           });
+        } catch (error) {
+          console.error(`Error running seeding: ${error}`);
+          // Continue running the server even if seeding fails
+          app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+          });
         }
-      );
+      });
     });
   })
   .catch((error) => {

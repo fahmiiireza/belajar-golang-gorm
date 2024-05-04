@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 5434
+    - port: 5432
   selector:
     app: book-db
 
@@ -29,7 +29,7 @@ spec:
         - name: book-db
           image: postgres:16-alpine
           ports:
-            - containerPort: 5434
+            - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
               value: "postgres"
