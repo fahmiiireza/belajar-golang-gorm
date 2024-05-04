@@ -11,11 +11,11 @@ jobs:
     if: github.event.pull_request.merged == true
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
       - name: Change directory to book-service
         run: cd book-service
+        
+      - name: Checkout code
+        uses: actions/checkout@v2
         
       - name: Run tests
         uses: actions/setup-node@v3
@@ -26,19 +26,19 @@ jobs:
       - run: npm run build --if-present
       - run: npm test
 
-  trigger-jenkins-job:
-    name: Trigger Jenkins Job
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+  # trigger-jenkins-job:
+  #   name: Trigger Jenkins Job
+  #   runs-on: ubuntu-latest
+  #   if: github.event.pull_request.merged == true
 
-    steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
+  #   steps:
+  #     # Step 1: Checkout code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      # Step 2: Trigger Jenkins Job
-      - name: Trigger Jenkins Job
-        env:
-          JENKINS_TOKEN: ${{ secrets.JEKINS_TOKEN }}
-        run: |
-          curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=${JENKINS_TOKEN}" --user admin:${JENKINS_TOKEN}
+  #     # Step 2: Trigger Jenkins Job
+  #     - name: Trigger Jenkins Job
+  #       env:
+  #         JENKINS_TOKEN: ${{ secrets.JEKINS_TOKEN }}
+  #       run: |
+  #         curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=${JENKINS_TOKEN}" --user admin:${JENKINS_TOKEN}
