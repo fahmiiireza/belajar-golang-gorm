@@ -2,12 +2,14 @@ name: Trigger Jenkins Job
 
 on:
   pull_request:
-    types: [closed, merged]
+    types: [opened, synchronize]
 
 jobs:
   trigger-jenkins-job:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Jenkins Job
+        env:
+          JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
         run: |
-          curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=110915c24cb8b60d62e6bac213fba76ab0" --user admin:110915c24cb8b60d62e6bac213fba76ab0
+          curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=${JENKINS_TOKEN}" --user admin:${JENKINS_TOKEN}
