@@ -10,5 +10,4 @@ jobs:
     steps:
       - name: Trigger Jenkins Job
         run: |
-          curl -X POST \
-               http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=fahmi-jenkin
+          curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=110915c24cb8b60d62e6bac213fba76ab0" --user admin:110915c24cb8b60d62e6bac213fba76ab0
