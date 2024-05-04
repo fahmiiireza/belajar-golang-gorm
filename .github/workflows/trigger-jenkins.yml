@@ -16,6 +16,7 @@ jobs:
         
       - name: Print current working directory
         run: ls -al
+
         
       - name: Change directory to book-service
         run: cd book-service
