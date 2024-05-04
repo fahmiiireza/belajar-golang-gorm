@@ -10,12 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
 
-    steps:
-      - name: Change directory to book-service
-        run: cd book-service
-        
+    steps:        
       - name: Checkout code
         uses: actions/checkout@v2
+        
+      - name: Print current working directory
+        run: pwd
+        
+      - name: Change directory to book-service
+        run: cd book-service
+
         
       - name: Run tests
         uses: actions/setup-node@v3
