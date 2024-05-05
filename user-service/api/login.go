@@ -10,11 +10,12 @@ import (
 )
 
 func test(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hello Cluster"})
+	c.JSON(http.StatusOK, gin.H{"message": "Hello World 05/05/2024"})
 }
-func test2(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "This is the new test2"})
-}
+
+// func test2(c *gin.Context) {
+// 	c.JSON(http.StatusOK, gin.H{"message": "This is the new test2"})
+// }
 
 func login(c *gin.Context) {
 	var user UserLogin
