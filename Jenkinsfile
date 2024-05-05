@@ -28,6 +28,12 @@ pipeline {
                 }
             }
         }
+        stage('Reauthenticate') {
+            steps {
+                // Reauthenticate Docker to ECR
+                sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/p2c0c2f5'
+            }
+        }
         stage('Push to ECR') {
             steps {
                 // Push Docker images to ECR

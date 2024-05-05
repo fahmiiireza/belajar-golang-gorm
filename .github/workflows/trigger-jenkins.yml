@@ -1,0 +1,40 @@
+name: Lint and Trigger Jenkins
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: "main"
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+
+
+  trigger-jenkins-job:
+    name: Trigger Jenkins Job
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Trigger Jenkins Job
+      - name: Trigger Jenkins Job
+        env:
+          JENKINS_TOKEN: ${{ secrets.JEKINS_TOKEN }}
+        run: |
+          curl -X POST "http://ec2-54-91-214-106.compute-1.amazonaws.com:8080/job/first-job/build?token=${JENKINS_TOKEN}" --user admin:${JENKINS_TOKEN}
