@@ -6,12 +6,6 @@ pipeline {
             steps {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Man4ct/belajar-golang-gorm.git'            }
         }
-        stage('Test Jenkin') {
-            steps {
-                sh 'echo "Hello Jenkins"'
-            }
-        } 
-
         stage('Build') {
             steps {
                 // Build Docker images for each microservice
