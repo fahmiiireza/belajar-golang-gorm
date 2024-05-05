@@ -25,6 +25,7 @@ jobs:
   trigger-jenkins-job:
     name: Trigger Jenkins Job
     runs-on: ubuntu-latest
+    needs: run-lint
     if: github.event.pull_request.merged == true
 
     steps:
