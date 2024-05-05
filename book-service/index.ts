@@ -8,12 +8,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.get('/test', (req: Request, res: Response) => {
+  res.send('Test');
+});
 app.use(verifyToken);
 app.use('/books', bookRoutes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Test');
-});
+
 
 console.log('Attempting to authenticate with the database...');
 sequelize
