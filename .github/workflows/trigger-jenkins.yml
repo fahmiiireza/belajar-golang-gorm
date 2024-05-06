@@ -8,18 +8,21 @@ jobs:
   unit-test:
 
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./book-service
     strategy:
       matrix:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - run: cd book-service
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-        fetch-depth: 0
+    - uses: actions/checkout@v2
+      # with:
+      #   submodules: 'true'
+      #   fetch-depth: 0
+    
+    # - run: cd book-service
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
