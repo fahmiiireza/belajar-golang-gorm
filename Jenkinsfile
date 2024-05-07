@@ -16,6 +16,7 @@ pipeline {
                 }
             }
         }
+        
         // stage('Build') {
         //     steps {
         //         // Build Docker images for each microservice
