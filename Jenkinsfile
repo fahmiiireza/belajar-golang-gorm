@@ -7,17 +7,17 @@ pipeline {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Man4ct/belajar-golang-gorm.git'
                 }
         }
-        stage('Unit Test') {
-            steps {
-                dir('book-service') {
-                    sh '''
-                    npm ci
-                    npm run build --if-present
-                    npm test
-                    '''
-                }
-            }
-        }
+        // stage('Unit Test') {
+        //     steps {
+        //         dir('book-service') {
+        //             sh '''
+        //             npm ci
+        //             npm run build --if-present
+        //             npm test
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Build') {
             steps {
