@@ -10,7 +10,7 @@ import (
 )
 
 func test(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hello World 07/05/2024"})
+	c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
 }
 
 // func test2(c *gin.Context) {
