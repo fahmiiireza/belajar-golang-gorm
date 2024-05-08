@@ -1,4 +1,4 @@
-name: Lint and Trigger Jenkins
+name: Test and Trigger Jenkins
 
 on:
   pull_request:
@@ -25,7 +25,7 @@ jobs:
       working-directory: ./book-service
       run: |
         npm ci
-        npm run build --if-present
+        npm run build
         npm test
 
   run-lint:

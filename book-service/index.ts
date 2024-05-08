@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get('/test', (req: Request, res: Response) => {
-  res.send('Test');
+  res.json({ message: 'Hello, World in May' });
 });
 app.use(verifyToken);
 app.use('/books', bookRoutes);
