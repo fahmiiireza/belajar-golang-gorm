@@ -64,5 +64,10 @@ pipeline {
                 sh 'kubectl rollout restart deployment book-service'
             }
         }
+        stage('Cleanup') {
+            steps {
+                 sh 'docker image prune -af'
+            }
+        }
     }
 }
