@@ -56,7 +56,7 @@ Library Management System ini dirancang untuk mengatasi masalah-masalah tersebut
 
 ### 3.1 Use Case Diagram
 
-*(Diagram dapat dibuat menggunakan perangkat lunak seperti draw.io atau software lainnya yang sesuai)*
+[Diagram](https://lucid.app/lucidchart/4b2b7614-91b7-47b5-862c-897428dbe623/edit?viewport_loc=-1055%2C-319%2C4744%2C2587%2C0_0&invitationId=inv_7101167f-0671-4264-b981-9aea21f6770f)
 
 ### 3.2 Kebutuhan Fungsional
 
