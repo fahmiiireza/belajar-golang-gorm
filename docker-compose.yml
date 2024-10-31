@@ -4,7 +4,7 @@ services:
   user-db: 
     image: postgres:16-alpine
     ports:
-      - 5433:5432
+      - 5436:5432
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
@@ -20,9 +20,8 @@ services:
       - book-service
     environment:
       - PORT=8080
-      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db?
+      - DB_URL=postgresql://postgres:postgres@user-db:5432/user-db
       - SECRET_KEY=fahmi
-
 
   book-service:
     build: ./book-service
@@ -33,13 +32,13 @@ services:
       - book-db
     environment:
       - PORT=3000
-      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db?
+      - DB_URL=postgresql://postgres:postgres@book-db:5432/book-db?sslmode=disable
       - SECRET_KEY=fahmi
 
   book-db: 
     image: postgres:16-alpine
     ports:
-      - 5434:5432
+      - 5439:5432
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres

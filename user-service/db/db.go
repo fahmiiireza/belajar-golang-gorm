@@ -18,10 +18,16 @@ var dbInstance *gorm.DB
 
 func ConnectDB() {
 	// Connect to the database
+	fmt.Println("testestete")
+	fmt.Println("testestete")
+	fmt.Println("testestete")
+	fmt.Println("testestete")
+	fmt.Println("testestete")
 	var err error
 	dsn := os.Getenv("DB_URL") + "?sslmode=disable"
 	dbInstance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
+	fmt.Println(dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

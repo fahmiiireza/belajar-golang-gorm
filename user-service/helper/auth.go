@@ -23,6 +23,7 @@ func CheckPasswordHash(hash, password string) bool {
 
 func CreateToken(username string, role string) (string, error) {
 	var secretKey = []byte(os.Getenv("SECRET_KEY"))
+	fmt.Println(secretKey)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"username": username,
@@ -55,8 +56,10 @@ func VerifyExpirationTime(tokenTime time.Time) error {
 }
 
 func ParseToken(tokenString string) (jwt.MapClaims, error) {
+	var secretKey = []byte(os.Getenv("SECRET_KEY"))
+	fmt.Println(secretKey)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return secretKey, nil
 	})
 	if err != nil {
 		return nil, err
